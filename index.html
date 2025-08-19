@@ -1,105 +1,33 @@
 <!doctype html>
 <html lang="ro">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Munteanu Silviu-Cristian — .NET Developer | Master’s Student in Cybersecurity</title>
-  <meta name="description" content=".NET Developer și masterand în Cybersecurity. Construiesc aplicații sigure, API-uri clare și optimizez performanța."/>
-  <link rel="canonical" href="https://munteanusil.github.io/"/>
+<!-- HERO -->
+<header class="hero">
+  <!-- fundal cyber animat -->
+  <canvas id="cyber-bg" aria-hidden="true"></canvas>
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Munteanu Silviu-Cristian — .NET & Cybersecurity"/>
-  <meta property="og:description" content=".NET Developer | Master’s Student in Cybersecurity | Secure Applications & API Security"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://munteanusil.github.io/"/>
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:title" content="Munteanu Silviu-Cristian — .NET & Cybersecurity"/>
-  <meta name="twitter:description" content=".NET Developer | Master’s Student in Cybersecurity | Secure Applications & API Security"/>
-
-  <!-- Favicon minimalist (emoji) -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80'>🛡️</text></svg>">
-
-  <!-- Schema.org (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Person",
-    "name":"Munteanu Silviu-Cristian",
-    "jobTitle": ".NET Developer & Master's Student in Cybersecurity",
-    "url":"https://munteanusil.github.io/",
-    "sameAs":[
-      "https://ro.linkedin.com/in/silviu-munteanu-20b7b11a1",
-      "https://github.com/munteanusil"
-    ],
-    "knowsAbout": ["ASP.NET", ".NET", "C#", "Cybersecurity", "OWASP", "API Security", "Python", "Full-stack development"]
-  }
-  </script>
-
-  <style>
-    :root{
-      --bg:#0b0e14;        /* dark */
-      --card:#11151f;
-      --text:#e6e8ed;
-      --muted:#aab1c0;
-      --brand:#7aa2f7;     /* blue */
-      --accent:#7dcfff;    /* cyan */
-      --ok:#9ece6a;
-      --max:980px;
-      --radius:18px;
-      --shadow:0 10px 30px rgba(0,0,0,.25);
-    }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#ffffff; --card:#f7f8fb; --text:#0f172a; --muted:#475569; --brand:#2457f5; --accent:#0ea5e9; --ok:#16a34a; }
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
-    a{color:var(--brand);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
-
-    /* NAV */
-    .nav{position:sticky;top:0;z-index:10;background:rgba(11,14,20,.7);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
-    .nav .row{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-    .brand{display:flex;gap:10px;align-items:center;font-weight:700}
-    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:999px;font-size:12px;color:var(--muted)}
-    .nav a{margin-left:14px}
-
-    /* HERO */
-    .hero{padding:64px 0 24px}
-    h1{font-size:clamp(28px,6vw,44px);margin:0 0 8px}
-    .lead{font-size:clamp(16px,2.4vw,20px);color:var(--muted);margin:10px 0 20px}
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
-    .chip{padding:6px 10px;border:1px solid rgba(255,255,255,.10);border-radius:999px;font-size:13px;color:var(--muted);background:var(--card)}
-    .cta{display:flex;gap:12px;margin-top:18px}
-    .btn{display:inline-block;padding:10px 16px;border-radius:10px;background:var(--brand);color:#fff;font-weight:600}
-    .btn.out{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text)}
-
-    /* SECTIONS */
-    section{padding:28px 0}
-    h2{font-size:22px;margin:0 0 12px}
-    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-    .card h3{margin:0 0 8px;font-size:18px}
-    .card img{width:100%;border-radius:12px;margin-bottom:10px}
-    .meta{color:var(--muted);font-size:13px}
-    .list{display:grid;gap:10px}
-
-    /* TIMELINE (dacă vrei și linie pe stânga pentru o altă secțiune) */
-    .timeline{position:relative;padding-left:22px}
-    .timeline:before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(255,255,255,.12)}
-    .titem{position:relative;margin:8px 0}
-    .titem:before{content:"";position:absolute;left:-16px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
-
-    /* FOOTER */
-    footer{border-top:1px solid rgba(255,255,255,.08);padding:20px 0;margin-top:24px;color:var(--muted);text-align:center}
-
-    /* TOGGLE */
-    .toggle{cursor:pointer;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:999px}
-  </style>
-</head>
+  <!-- conținutul (deasupra fundalului) -->
+  <div class="wrap hero-row">
+    <img src="assets/images/profile.png" alt="Munteanu Silviu-Cristian" class="pfp">
+    <div>
+      <h1>Munteanu Silviu-Cristian</h1>
+      <p class="lead">.NET Developer și masterand în Cybersecurity. Îmbin dezvoltarea de aplicații performante cu practici de securitate aplicată: API Security, autentificare modernă și hardening.</p>
+      <div class="chips">
+        <span class="chip">C#/.NET</span>
+        <span class="chip">ASP.NET Web API</span>
+        <span class="chip">Entity Framework</span>
+        <span class="chip">OWASP Top 10</span>
+        <span class="chip">JWT / OAuth2</span>
+        <span class="chip">Python (automation)</span>
+        <span class="chip">CI/CD</span>
+      </div>
+      <div class="cta">
+        <a class="btn" href="https://github.com/munteanusil" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn out" href="https://ro.linkedin.com/in/silviu-munteanu-20b7b11a1" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn out" href="#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</header>
 <body>
   <!-- NAV -->
   <div class="nav">
@@ -150,18 +78,28 @@
   </div>
 </header>
 <style>
- /* layout hero + canvas */
+/* HERO stratificat: canvas (0) + overlay (1) + text (2) */
 .hero{ position:relative; overflow:hidden; }
-.hero-row{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; position:relative; z-index:1; }
-#cyber-bg{
-  position:absolute; inset:0; width:100%; height:100%;
-  display:block; z-index:0; filter: blur(0.2px);
-  background: radial-gradient(600px 300px at 10% 10%, rgba(122,162,247,.15), transparent 60%),
-              radial-gradient(500px 250px at 90% 30%, rgba(125,207,255,.10), transparent 60%);
+.hero::after{
+  content:""; position:absolute; inset:0; z-index:1;
+  /* voal pentru contrast + puțin gradient spre text */
+  background:
+    linear-gradient(180deg, rgba(11,14,20,.55), rgba(11,14,20,.35) 60%, rgba(11,14,20,.40));
+  mix-blend-mode: multiply;
 }
-/* poză profil frumos rotundă */
-.pfp{ width:140px;height:140px;border-radius:50%;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,.3) }
-/* accesibilitate: dacă userul preferă mai puțină mișcare, oprim animația */
+#cyber-bg{
+  position:absolute; inset:0; z-index:0; width:100%; height:100%; display:block;
+  filter: blur(.2px);
+  background:
+    radial-gradient(600px 300px at 10% 10%, rgba(122,162,247,.15), transparent 60%),
+    radial-gradient(500px 250px at 90% 30%, rgba(125,207,255,.10), transparent 60%);
+}
+/* conținutul stă deasupra */
+.hero .hero-row{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; position:relative; z-index:2; }
+.pfp{ width:140px; height:140px; border-radius:50%; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,.3) }
+/* lizibilitate mai bună */
+.hero h1{ text-shadow:0 2px 8px rgba(0,0,0,.35); }
+.hero .lead{ text-shadow:0 1px 6px rgba(0,0,0,.30); }
 @media (prefers-reduced-motion: reduce){
   #cyber-bg{ display:none; }
 }
