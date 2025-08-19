@@ -78,30 +78,30 @@
   </div>
 </header>
 <style>
-/* HERO stratificat: canvas (0) + overlay (1) + text (2) */
-.hero{ position:relative; overflow:hidden; }
-.hero::after{
-  content:""; position:absolute; inset:0; z-index:1;
-  /* voal pentru contrast + puțin gradient spre text */
-  background:
-    linear-gradient(180deg, rgba(11,14,20,.55), rgba(11,14,20,.35) 60%, rgba(11,14,20,.40));
-  mix-blend-mode: multiply;
+/* Cyber borders pe toată pagina */
+body::before, 
+body::after {
+  content:"";
+  position:fixed;
+  pointer-events:none;
+  z-index:0;
+  border:2px solid var(--accent);
+  border-radius:16px;
+  animation: glow 3s linear infinite alternate;
 }
-#cyber-bg{
-  position:absolute; inset:0; z-index:0; width:100%; height:100%; display:block;
-  filter: blur(.2px);
-  background:
-    radial-gradient(600px 300px at 10% 10%, rgba(122,162,247,.15), transparent 60%),
-    radial-gradient(500px 250px at 90% 30%, rgba(125,207,255,.10), transparent 60%);
+body::before{
+  inset:12px;   /* margine interioară */
+  opacity:0.3;
 }
-/* conținutul stă deasupra */
-.hero .hero-row{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; position:relative; z-index:2; }
-.pfp{ width:140px; height:140px; border-radius:50%; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,.3) }
-/* lizibilitate mai bună */
-.hero h1{ text-shadow:0 2px 8px rgba(0,0,0,.35); }
-.hero .lead{ text-shadow:0 1px 6px rgba(0,0,0,.30); }
-@media (prefers-reduced-motion: reduce){
-  #cyber-bg{ display:none; }
+body::after{
+  inset:24px;
+  opacity:0.15;
+}
+
+/* animația luminii care “pulsează” */
+@keyframes glow {
+  from { box-shadow:0 0 6px var(--accent); }
+  to   { box-shadow:0 0 22px var(--brand), 0 0 44px var(--accent); }
 }
 
 </style>
