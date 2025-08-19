@@ -3,15 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Munteanu Silviu-Cristian – .NET Developer | Master’s Student in Cybersecurity | Secure Applications & API Security</title>
-  <meta name="description" content="Sunt .NET developer și masterand în cybersecurity. Construiesc aplicații sigure, API-uri și tooling pentru dezvoltatori.">
-  <link rel="canonical" href="https://silviu-munteanu.github.io/">
+  <title>Munteanu Silviu-Cristian — .NET Developer | Master’s Student in Cybersecurity</title>
+  <meta name="description" content=".NET Developer și masterand în Cybersecurity. Construiesc aplicații sigure, API-uri clare și optimizez performanța."/>
+  <link rel="canonical" href="https://munteanusil.github.io/"/>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Munteanu Silviu-Cristian – .NET & Cybersecurity">
-  <meta property="og:description" content=".NET developer și masterand în cybersecurity. Proiecte, articole, contact.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://silviu-munteanu.github.io/">
+  <meta property="og:title" content="Munteanu Silviu-Cristian — .NET & Cybersecurity"/>
+  <meta property="og:description" content=".NET Developer | Master’s Student in Cybersecurity | Secure Applications & API Security"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://munteanusil.github.io/"/>
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="Munteanu Silviu-Cristian — .NET & Cybersecurity"/>
+  <meta name="twitter:description" content=".NET Developer | Master’s Student in Cybersecurity | Secure Applications & API Security"/>
+
+  <!-- Favicon minimalist (emoji) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80'>🛡️</text></svg>">
 
   <!-- Schema.org (JSON-LD) -->
   <script type="application/ld+json">
@@ -19,90 +27,249 @@
     "@context":"https://schema.org",
     "@type":"Person",
     "name":"Munteanu Silviu-Cristian",
-    "jobTitle":".NET Developer & Master's Student in Cybersecurity",
-    "alumniOf":"Master Cybersecurity",
-    "url":"https://silviu-munteanu.github.io/",
+    "jobTitle": ".NET Developer & Master's Student in Cybersecurity",
+    "url":"https://munteanusil.github.io/",
     "sameAs":[
       "https://ro.linkedin.com/in/silviu-munteanu-20b7b11a1",
-      "https://github.com/silviu-munteanu"
+      "https://github.com/munteanusil"
     ],
     "knowsAbout": ["ASP.NET", ".NET", "C#", "Cybersecurity", "OWASP", "API Security", "Python", "Full-stack development"]
   }
   </script>
 
   <style>
-    :root { --w: 900px; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; color:#111; line-height:1.6; }
-    header { padding:56px 16px; background:linear-gradient(180deg,#f6f8ff,#fff); border-bottom:1px solid #eee; }
-    main { max-width:var(--w); margin:0 auto; padding:24px 16px 56px; }
-    h1 { font-size:clamp(28px,4vw,40px); margin:0 0 8px; }
-    h2 { font-size:22px; margin:24px 0 12px; }
-    p.lead { font-size:18px; color:#333; }
-    .chip { display:inline-block; padding:6px 10px; border:1px solid #ddd; border-radius:999px; margin:4px 6px 0 0; font-size:14px;}
-    .card { border:1px solid #eee; border-radius:14px; padding:16px; margin:14px 0; }
-    a { color:#0a66c2; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
-    footer { border-top:1px solid #eee; padding:24px 16px; text-align:center; color:#666; }
+    :root{
+      --bg:#0b0e14;        /* dark */
+      --card:#11151f;
+      --text:#e6e8ed;
+      --muted:#aab1c0;
+      --brand:#7aa2f7;     /* blue */
+      --accent:#7dcfff;    /* cyan */
+      --ok:#9ece6a;
+      --max:980px;
+      --radius:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#ffffff; --card:#f7f8fb; --text:#0f172a; --muted:#475569; --brand:#2457f5; --accent:#0ea5e9; --ok:#16a34a; }
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
+
+    /* NAV */
+    .nav{position:sticky;top:0;z-index:10;background:rgba(11,14,20,.7);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav .row{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:700}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:999px;font-size:12px;color:var(--muted)}
+    .nav a{margin-left:14px}
+
+    /* HERO */
+    .hero{padding:64px 0 24px}
+    h1{font-size:clamp(28px,6vw,44px);margin:0 0 8px}
+    .lead{font-size:clamp(16px,2.4vw,20px);color:var(--muted);margin:10px 0 20px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+    .chip{padding:6px 10px;border:1px solid rgba(255,255,255,.10);border-radius:999px;font-size:13px;color:var(--muted);background:var(--card)}
+    .cta{display:flex;gap:12px;margin-top:18px}
+    .btn{display:inline-block;padding:10px 16px;border-radius:10px;background:var(--brand);color:#fff;font-weight:600}
+    .btn.out{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text)}
+
+    /* SECTIONS */
+    section{padding:28px 0}
+    h2{font-size:22px;margin:0 0 12px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card img{width:100%;border-radius:12px;margin-bottom:10px}
+    .meta{color:var(--muted);font-size:13px}
+    .list{display:grid;gap:10px}
+
+    /* TIMELINE (dacă vrei și linie pe stânga pentru o altă secțiune) */
+    .timeline{position:relative;padding-left:22px}
+    .timeline:before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(255,255,255,.12)}
+    .titem{position:relative;margin:8px 0}
+    .titem:before{content:"";position:absolute;left:-16px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+
+    /* FOOTER */
+    footer{border-top:1px solid rgba(255,255,255,.08);padding:20px 0;margin-top:24px;color:var(--muted);text-align:center}
+
+    /* TOGGLE */
+    .toggle{cursor:pointer;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:999px}
   </style>
 </head>
 <body>
-  <header>
-    <main>
-      <h1>Munteanu Silviu-Cristian</h1>
-      <p class="lead">.NET Developer și masterand în Cybersecurity. Explorez îmbinarea dintre dezvoltarea de aplicații performante și principiile de securitate avansată. Construiesc aplicații securizate, implementez soluții de autentificare moderne și optimizez aplicații pentru stabilitate și viteză.</p>
-      <p>
-        <a href="https://github.com/silviu-munteanu">GitHub</a> ·
-        <a href="https://ro.linkedin.com/in/silviu-munteanu-20b7b11a1">LinkedIn</a> ·
-        <a href="mailto:contact@domeniul-tau.com">Contact</a>
-      </p>
-    </main>
-  </header>
-
-  <main>
-    <section>
-      <h2>Abilități</h2>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="wrap row">
+      <div class="brand">
+        <span class="badge">🛡️ Cyber-minded</span>
+        <span class="badge">⚙️ .NET</span>
+      </div>
       <div>
-        <span class="chip">C# / .NET</span>
-        <span class="chip">ASP.NET / MVC / Web API</span>
+        <a href="#proiecte">Proiecte</a>
+        <a href="#abilitati">Abilități</a>
+        <a href="#educatie">Educație</a>
+        <a href="#contact">Contact</a>
+        <button id="mode" class="toggle" aria-label="Comută tema">🌙</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="wrap">
+      <h1>Munteanu Silviu-Cristian</h1>
+      <p class="lead">.NET Developer și masterand în Cybersecurity. Îmbin dezvoltarea de aplicații performante cu practici de securitate aplicată: API Security, autentificare modernă și hardening.</p>
+      <div class="chips">
+        <span class="chip">C#/.NET</span>
+        <span class="chip">ASP.NET Web API</span>
         <span class="chip">Entity Framework</span>
-        <span class="chip">Azure Basics</span>
         <span class="chip">OWASP Top 10</span>
         <span class="chip">JWT / OAuth2</span>
+        <span class="chip">Python (automation)</span>
         <span class="chip">CI/CD</span>
       </div>
-    </section>
+      <div class="cta">
+        <a class="btn" href="https://github.com/munteanusil" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn out" href="https://ro.linkedin.com/in/silviu-munteanu-20b7b11a1" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn out" href="#contact">Contact</a>
+      </div>
+    </div>
+  </header>
 
-    <section>
+  <main class="wrap">
+    <!-- PROIECTE -->
+    <section id="proiecte">
       <h2>Proiecte</h2>
       <div class="grid">
-        <div class="card">
-          <strong>API securizat .NET</strong>
-          <p>Protecție cu JWT, rate limiting și input validation.</p>
-          <p><a href="https://github.com/silviu-munteanu/secure-dotnet-api">Vezi pe GitHub</a></p>
+        <article class="card">
+          <h3>Secure .NET API</h3>
+          <p>Autentificare cu JWT, rate limiting, validare input și audit de acces.</p>
+          <p class="meta">Tech: ASP.NET Web API, EF, FluentValidation</p>
+          <p><a href="https://github.com/munteanusil" target="_blank" rel="noopener">Vezi pe GitHub →</a></p>
+        </article>
+        <article class="card">
+          <h3>SecuCheck</h3>
+          <p>Utilitar CLI care scanează configurări nesigure în aplicații .NET.</p>
+          <p class="meta">Tech: .NET, Roslyn Analyzers</p>
+          <p><a href="https://github.com/munteanusil" target="_blank" rel="noopener">Vezi pe GitHub →</a></p>
+        </article>
+        <article class="card">
+          <h3>Python Automation</h3>
+          <p>Scripturi pentru scanări periodice și raportare (security hygiene).</p>
+          <p class="meta">Tech: Python, Requests, CSV/JSON</p>
+          <p><a href="https://github.com/munteanusil" target="_blank" rel="noopener">Vezi pe GitHub →</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ABILITATI -->
+    <section id="abilitati">
+      <h2>Abilități</h2>
+      <div class="grid">
+        <div class="card list">
+          <strong>Backend .NET</strong>
+          <span>ASP.NET / MVC / Web API</span>
+          <span>Entity Framework</span>
+          <span>Identity, JWT, OAuth2/OIDC</span>
+          <span>Testing de bază (unit/integration)</span>
         </div>
-        <div class="card">
-          <strong>Tool „SecuCheck”</strong>
-          <p>Mic utilitar care scanează setări de securitate pentru aplicații .NET.</p>
-          <p><a href="https://github.com/silviu-munteanu">Vezi pe GitHub</a></p>
+        <div class="card list">
+          <strong>Security</strong>
+          <span>OWASP Top 10, input validation</span>
+          <span>Rate limiting, hardening headers</span>
+          <span>Least Privilege, RBAC</span>
+          <span>Logging & audit</span>
+        </div>
+        <div class="card list">
+          <strong>Tooling</strong>
+          <span>CI/CD (GitHub Actions)</span>
+          <span>Docker</span>
+          <span>Python</span>
+          <span>Azure (bază)</span>
         </div>
       </div>
     </section>
 
-    <section>
-      <h2>Articole</h2>
+    <!-- EDUCATIE -->
+    <section id="educatie">
+      <h2>Educație & Certificări</h2>
+      <div class="grid">
+        <!-- Master Cybersecurity -->
+        <div class="card">
+          <strong>Master’s Student in Cybersecurity</strong>
+          <div class="meta">2025 — prezent</div>
+          <p>Program de master axat pe securitate cibernetică: rețele, aplicații, criptografie.</p>
+        </div>
+
+        <!-- Curs .NET 1 -->
+        <div class="card">
+          <img src="assets/images/dotnet-course1.png" alt="Curs .NET Fundamentals">
+          <strong>.NET Fundamentals</strong>
+          <div class="meta">2020</div>
+          <p>Introducere în C# și ecosistemul .NET. Bazele OOP și practică.</p>
+          <p><a href="https://link-la-certificat1.com" target="_blank" rel="noopener">Vezi certificatul →</a></p>
+        </div>
+
+        <!-- Curs .NET 2 -->
+        <div class="card">
+          <img src="assets/images/dotnet-course2.png" alt="Curs ASP.NET MVC">
+          <strong>ASP.NET MVC Development</strong>
+          <div class="meta">2021</div>
+          <p>Aplicații web cu MVC, Entity Framework și SQL Server.</p>
+          <p><a href="https://link-la-certificat2.com" target="_blank" rel="noopener">Vezi certificatul →</a></p>
+        </div>
+
+        <!-- Curs .NET 3 -->
+        <div class="card">
+          <img src="assets/images/dotnet-course3.png" alt="Curs Advanced .NET">
+          <strong>Advanced .NET Development</strong>
+          <div class="meta">2022</div>
+          <p>Tehnici avansate în C#, optimizare, design patterns și bune practici.</p>
+          <p><a href="https://link-la-certificat3.com" target="_blank" rel="noopener">Vezi certificatul →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <h2>Contact</h2>
       <div class="card">
-        <strong>„Cum securizez rapid un API în .NET 6”</strong>
-        <p>Ghid pas cu pas pentru autentificare, configurări și testare.</p>
-        <p><a href="https://dev.to/silviu-munteanu/articol-api-secure">Citește articolul</a></p>
+        <p>Îți răspund cu drag la întrebări sau propuneri de colaborare.</p>
+        <p><a href="mailto:munteanusilviu1996@yahoo.com">📧 munteanusilviu1996@yahoo.com</a></p>
       </div>
     </section>
   </main>
 
   <footer>
-    © <span id="y"></span> Munteanu Silviu-Cristian · .NET & Cybersecurity
+    © <span id="y"></span> Munteanu Silviu-Cristian · .NET & Cybersecurity · <a href="#top">Sus ↑</a>
   </footer>
 
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+  <script>
+    // anul din footer
+    document.getElementById('y').textContent = new Date().getFullYear();
+    // comutator light/dark simplu
+    const btn = document.getElementById('mode');
+    const THEMES = {
+      dark:{bg:'#0b0e14',card:'#11151f',text:'#e6e8ed',muted:'#aab1c0',brand:'#7aa2f7',accent:'#7dcfff',ok:'#9ece6a'},
+      light:{bg:'#ffffff',card:'#f7f8fb',text:'#0f172a',muted:'#475569',brand:'#2457f5',accent:'#0ea5e9',ok:'#16a34a'}
+    };
+    const setTheme = (t)=>{
+      const v=THEMES[t];
+      for(const k in v){document.documentElement.style.setProperty(`--${k}`,v[k]);}
+      localStorage.setItem('theme',t);
+      btn.textContent = t==='dark'?'🌙':'☀️';
+    };
+    const stored = localStorage.getItem('theme');
+    setTheme(stored || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'));
+    btn.addEventListener('click',()=>{setTheme((localStorage.getItem('theme')==='dark')?'light':'dark')});
+  </script>
 </body>
 </html>
+
+
+
+
