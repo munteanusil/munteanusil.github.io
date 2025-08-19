@@ -117,7 +117,13 @@
       </div>
     </div>
   </div>
-
+     <div class="dots">
+  <span class="dot" style="left:10%; top:60%"></span>
+  <span class="dot" style="left:65%; top:20%"></span>
+  <span class="dot" style="left:85%; top:75%"></span>
+  <span class="dot" style="left:32%; top:35%"></span>
+</div>
+  
 <header class="hero">
   <div class="wrap" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
     
@@ -128,12 +134,7 @@
     <!-- text -->
     <div>
       
-      <div class="dots">
-  <span class="dot" style="left:10%; top:60%"></span>
-  <span class="dot" style="left:65%; top:20%"></span>
-  <span class="dot" style="left:85%; top:75%"></span>
-  <span class="dot" style="left:32%; top:35%"></span>
-</div>
+ 
       
       <h1>Munteanu Silviu-Cristian</h1>
       <p class="lead">.NET Developer și masterand în Cybersecurity. Îmbin dezvoltarea de aplicații performante cu practici de securitate aplicată: API Security, autentificare modernă și hardening.</p>
@@ -155,25 +156,34 @@
   </div>
 </header>
 <style>
- /* puncte luminoase care plutesc încet */
+ /* PARTICULE — vizibile sub textul din HERO */
 .hero{ position:relative; overflow:hidden; }
+.hero > .wrap{ position:relative; z-index:1; }   /* textul stă deasupra particulelor */
+
 .hero .dots{
-  position:absolute; inset:0; pointer-events:none; z-index:-1;
+  position:absolute; inset:0;
+  pointer-events:none;
+  z-index:0; /* NU mai folosim -1 */
 }
+
 .hero .dot{
-  position:absolute; width:8px; height:8px; border-radius:50%;
-  background: rgba(122,162,247,.8);
-  box-shadow: 0 0 12px rgba(122,162,247,.8);
+  position:absolute; width:10px; height:10px; border-radius:50%;
+  background: rgba(122,162,247,.9);
+  box-shadow: 0 0 14px rgba(122,162,247,.9);
   animation: drift 12s ease-in-out infinite;
+  opacity: .9;
 }
-.hero .dot:nth-child(2){ background:rgba(125,207,255,.8); left:20%; top:70%; animation-duration:16s; }
-.hero .dot:nth-child(3){ background:rgba(158,206,106,.8); left:75%; top:30%; animation-duration:14s; }
+
+.hero .dot:nth-child(2){ background:rgba(125,207,255,.9); left:20%; top:70%; animation-duration:16s; }
+.hero .dot:nth-child(3){ background:rgba(158,206,106,.9); left:75%; top:30%; animation-duration:14s; }
 .hero .dot:nth-child(4){ left:40%; top:10%; animation-duration:18s; }
+
 @keyframes drift{
-  0%   { transform: translateY(0) translateX(0) scale(1); opacity:.8; }
+  0%   { transform: translateY(0) translateX(0) scale(1);   opacity:.9; }
   50%  { transform: translateY(-30px) translateX(10px) scale(1.15); opacity:1; }
-  100% { transform: translateY(0) translateX(0) scale(1); opacity:.8; }
+  100% { transform: translateY(0) translateX(0) scale(1);   opacity:.9; }
 }
+
 </style>
 
   <main class="wrap">
