@@ -326,7 +326,13 @@
   </div>
 </section>
 
-   
+   <!-- COUNTER vizite -->
+<div id="counter" 
+     style="position:fixed; top:50%; right:0; background:var(--card); 
+            color:var(--text); padding:10px 16px; border-radius:12px 0 0 12px; 
+            box-shadow:0 4px 12px rgba(0,0,0,.3); font-weight:600;">
+  👀 Vizite: <span id="count">0</span>
+</div>
 
     <!-- CONTACT -->
     <section id="contact">
@@ -339,14 +345,16 @@
   </main>
 
   <footer>
-    <p><small>Vizitatori:</small><br>
-      <img src="https://hitwebcounter.com/counter/counter.php?page=1234567&style=0006&nbdigits=5&type=ip&initCount=0" 
-           title="Contor vizitatori" alt="Contor vizitatori" border="0">
-    </p>
     © <span id="y"></span> Munteanu Silviu-Cristian · .NET & Cybersecurity · <a href="#top">Sus ↑</a>
   </footer>
 
   <script>
+     fetch('https://api.countapi.xyz/hit/munteanusil.github.io/visits')
+    .then(res => res.json())
+    .then(res => {
+      document.getElementById('count').textContent = res.value;
+    });
+    
     // anul din footer
     document.getElementById('y').textContent = new Date().getFullYear();
     // comutator light/dark simplu
