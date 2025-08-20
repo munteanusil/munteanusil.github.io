@@ -326,13 +326,17 @@
   </div>
 </section>
 
-<!-- COUNTER global – colț dreapta, la mijlocul paginii -->
-<div id="counter" 
-     style="position:fixed; top:50%; right:0; transform:translateY(-50%);
-            background:var(--card); color:var(--text);
-            padding:10px 16px; border-radius:12px 0 0 12px;
-            box-shadow:0 4px 12px rgba(0,0,0,.3); font-weight:600; z-index:9999;">
-  👀 Vizite: <span id="count">…</span>
+<!-- COUNTER vizite – fix pe dreapta, la mijloc -->
+<div style="
+  position:fixed; top:50%; right:0; transform:translateY(-50%);
+  background:var(--card); color:var(--text);
+  padding:8px 12px; border-radius:12px 0 0 12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.3); z-index:9999; font-weight:600;
+  display:flex; align-items:center; gap:8px;">
+  👀 Vizite:
+  <img 
+    src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fmunteanusil.github.io&count_bg=%237AA2F7&title_bg=%2311151F&icon=&icon_color=%23E7E7E7&title=total&edge_flat=false"
+    alt="vizite totale" style="height:20px">
 </div>
 
     <!-- CONTACT -->
@@ -350,29 +354,7 @@
   </footer>
 
   <script>
-    (async () => {
-  const el = document.getElementById('count');
-
-  // Folosim un "namespace" și "key" clare și fără puncte (mai sigur).
-  const namespace = 'munteanusil_github_io';
-  const key = 'homepage_visits';
-
-  // URL-ul care CREȘTE contorul la fiecare acces (endpoint: hit).
-  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-
-  try {
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    // data.value = noua valoare
-    el.textContent = (data && typeof data.value === 'number') ? data.value : '—';
-  } catch (err) {
-    // Dacă e blocat (AdBlock, rețea), afișăm ceva prietenos și logăm eroarea
-    console.error('Counter error:', err);
-    el.textContent = 'offline';
-  }
-})();
-    
+   
     // anul din footer
     document.getElementById('y').textContent = new Date().getFullYear();
     // comutator light/dark simplu
