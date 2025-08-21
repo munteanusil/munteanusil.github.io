@@ -38,15 +38,20 @@
     </div>
   </header>
 
-  <main class="wrap">
-    <h2>Ideea pe scurt</h2>
-    <div class="tip">
-      <strong>Guard clause</strong> verifică <em>la intrare</em> parametrii (input din afară). Dacă e rău → aruncă excepție imediat (fail-fast).<br>
-      <strong>Assertion</strong> verifică <em>în interior</em> lucruri care ar trebui să fie mereu adevărate. Dacă pică → e bug în logică (vezi în Debug/Test).
-    </div>
+ <main class="wrap">
+  <h2>1) Ce sunt Guard Clauses?</h2>
+  <p>
+    <strong>Guard Clause</strong> este un pattern care se folosește pentru a valida datele de intrare într-o metodă sau funcție.
+  </p>
+  <p>📌 <em>Ideea:</em> înainte să rulezi logica principală, verifici că argumentele primite respectă regulile de business sau constrângerile minime. Dacă nu → oprești imediat execuția, de obicei printr-o excepție.</p>
+  <p><strong>Exemplu din viața reală:</strong> la intrarea într-un club, un bodyguard verifică dacă ai bilet valid. Dacă nu, te oprește înainte să intri. Asta face și guard clause cu parametrii.</p>
+  <ul>
+    <li>se pun la începutul metodelor (<em>fail-fast</em>);</li>
+    <li>protejează aplicația de date invalide sau neașteptate;</li>
+    <li>reduc codul „nested” (evită <code>if</code>-uri în cascadă).</li>
+  </ul>
 
-    <h2>1) Guard clause – garda la intrare</h2>
-    <pre><code class="lang-csharp">public void RegisterUser(string email, int age)
+  <pre><code class="lang-csharp">public void RegisterUser(string email, int age)
 {
     if (string.IsNullOrWhiteSpace(email))
         throw new ArgumentException("Email obligatoriu.", nameof(email));
@@ -54,15 +59,22 @@
     if (age &lt; 13)
         throw new ArgumentOutOfRangeException(nameof(age), "Minim 13 ani.");
 
-    // ... continuă doar cu date bune
+    // logica continuă doar cu date valide
 }</code></pre>
 
-    <p>Poți folosi helper-ele din .NET sau o librărie:</p>
-    <pre><code class="lang-csharp">ArgumentNullException.ThrowIfNull(customer);
-Guard.Against.NegativeOrZero(total, nameof(total)); // din Ardalis.GuardClauses</code></pre>
+  <h2>2) Ce sunt Assertions?</h2>
+  <p>
+    <strong>Assertion</strong> este un mecanism folosit în timpul dezvoltării și testării pentru a verifica dacă presupunerile interne ale programului sunt corecte.
+  </p>
+  <p>📌 <em>Ideea:</em> „Eu, ca programator, știu că în acest punct al codului ceva trebuie să fie adevărat. Dacă nu e → am un bug.”</p>
+  <p><strong>Exemplu din viața reală:</strong> îți verifici portofelul după ce ai plătit la casă. Te aștepți să mai ai cardul acolo. Dacă nu e → ceva nu a mers bine în procesul tău.</p>
+  <ul>
+    <li>folosite mai ales în <em>Debug/Testing</em>, nu pentru inputul utilizatorului;</li>
+    <li>dacă pică, semnalează o problemă de implementare;</li>
+    <li>în .NET, se folosesc cu <code>Debug.Assert</code>.</li>
+  </ul>
 
-    <h2>2) Assertions – alarma din casă</h2>
-    <pre><code class="lang-csharp">using System.Diagnostics;
+  <pre><code class="lang-csharp">using System.Diagnostics;
 
 public Order MapToOrder(OrderDto dto)
 {
@@ -73,6 +85,7 @@ public Order MapToOrder(OrderDto dto)
 
     return order;
 }</code></pre>
+
 
     <h2>3) Împreună, într-un API</h2>
     <pre><code class="lang-csharp">[HttpPost("users")]
@@ -86,6 +99,23 @@ public IActionResult Post(RegisterUserDto dto)
     return Ok();
 }</code></pre>
 
+  <h2>4) Diferența cheie</h2>
+  <ul>
+    <li><strong>Guard Clauses:</strong> pentru date din <em>afară</em> (utilizator, API, fișiere, baze de date).</li>
+    <li><strong>Assertions:</strong> pentru <em>invariante interne</em> (logica ta trebuie să respecte anumite reguli).</li>
+  </ul>
+
+  <h2>5) Cum lucrează împreună?</h2>
+  <p>Un proiect matur le folosește pe amândouă:</p>
+  <ul>
+    <li><strong>Guard Clauses</strong> filtrează gunoiul din exterior.</li>
+    <li><strong>Assertions</strong> confirmă că logica internă a codului e solidă.</li>
+  </ul>
+  <p>Împreună oferă un dublu nivel de protecție:</p>
+  <ul>
+    <li>Evită date invalide.</li>
+    <li>Evită bug-uri ascunse.</li>
+  </ul>
     <h2>Regula ușoară</h2>
     <ul>
       <li><strong>Input din afară</strong> (user, API, fișiere) → <em>Guard clause</em>.</li>
