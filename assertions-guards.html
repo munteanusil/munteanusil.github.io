@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guard Clauses & Assertions în .NET – pe scurt, cu exemple</title>
+  <meta name="description" content="Ce sunt guard clauses și assertions în .NET, când se folosesc și cum lucrează împreună. Explicații simple + exemple scurte.">
+  <link rel="canonical" href="https://munteanusil.github.io/assertions-guards.html"/>
+
+  <!-- stiluri minime compatibile cu pagina principală -->
+  <style>
+    :root{ --bg:#0b0e14; --card:#11151f; --text:#e6e8ed; --muted:#aab1c0; --brand:#7aa2f7; --max:980px; }
+    @media (prefers-color-scheme: light){ :root{ --bg:#fff; --card:#f7f8fb; --text:#0f172a; --muted:#475569; --brand:#2457f5; } }
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
+    header{padding:32px 0 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .back{font-size:14px;color:var(--muted)}
+    h1{font-size:clamp(26px,4.5vw,38px);margin:6px 0}
+    .lead{color:var(--muted);margin:6px 0 18px}
+    .heroimg{width:100%;border-radius:16px;background:#0c1220;padding:0;display:block;border:1px solid rgba(255,255,255,.08)}
+    main{padding:20px 0 60px}
+    h2{margin:28px 0 8px;font-size:22px}
+    pre{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .tip{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;color:var(--muted)}
+    footer{border-top:1px solid rgba(255,255,255,.08);color:var(--muted);padding:18px 0;text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="back" href="index.html">← Înapoi la acasă</a>
+      <h1>Guard Clauses & Assertions în .NET</h1>
+      <p class="lead">„Garda la ușă” + „alarma din casă”. Împreună fac codul mai sigur și mai ușor de citit.</p>
+    
+      <img class="heroimg" src="assets/images/assert&clauses.png" alt="Guard vs Assert – ilustrație simplă">
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h2>Ideea pe scurt</h2>
+    <div class="tip">
+      <strong>Guard clause</strong> verifică <em>la intrare</em> parametrii (input din afară). Dacă e rău → aruncă excepție imediat (fail-fast).<br>
+      <strong>Assertion</strong> verifică <em>în interior</em> lucruri care ar trebui să fie mereu adevărate. Dacă pică → e bug în logică (vezi în Debug/Test).
+    </div>
+
+    <h2>1) Guard clause – garda la intrare</h2>
+    <pre><code class="lang-csharp">public void RegisterUser(string email, int age)
+{
+    if (string.IsNullOrWhiteSpace(email))
+        throw new ArgumentException("Email obligatoriu.", nameof(email));
+
+    if (age &lt; 13)
+        throw new ArgumentOutOfRangeException(nameof(age), "Minim 13 ani.");
+
+    // ... continuă doar cu date bune
+}</code></pre>
+
+    <p>Poți folosi helper-ele din .NET sau o librărie:</p>
+    <pre><code class="lang-csharp">ArgumentNullException.ThrowIfNull(customer);
+Guard.Against.NegativeOrZero(total, nameof(total)); // din Ardalis.GuardClauses</code></pre>
+
+    <h2>2) Assertions – alarma din casă</h2>
+    <pre><code class="lang-csharp">using System.Diagnostics;
+
+public Order MapToOrder(OrderDto dto)
+{
+    Debug.Assert(dto != null, "DTO validat deja la intrare.");
+
+    var order = new Order(dto.Id, dto.CustomerId);
+    Debug.Assert(order.Id != Guid.Empty, "Id nu trebuie să fie gol.");
+
+    return order;
+}</code></pre>
+
+    <h2>3) Împreună, într-un API</h2>
+    <pre><code class="lang-csharp">[HttpPost("users")]
+public IActionResult Post(RegisterUserDto dto)
+{
+    // Guard: input din exterior
+    if (string.IsNullOrWhiteSpace(dto.Email))
+        return BadRequest("Email necesar");
+
+    _userService.Register(dto.Email, dto.Age); // aici pot avea Debug.Assert pentru invariante interne
+    return Ok();
+}</code></pre>
+
+    <h2>Regula ușoară</h2>
+    <ul>
+      <li><strong>Input din afară</strong> (user, API, fișiere) → <em>Guard clause</em>.</li>
+      <li><strong>Invariante interne</strong> („nu ar trebui să se întâmple”) → <em>Assertion</em>.</li>
+    </ul>
+
+    <h2>Greșeli frecvente</h2>
+    <ul>
+      <li>Folosirea <em>Assert</em> pentru input de la utilizator (utilizatorul nu vede nimic în producție).</li>
+      <li>Mesaje vagi („Invalid data”) – spune clar <em>ce</em> e greșit.</li>
+      <li>Validări duplicate la fiecare strat fără motiv.</li>
+    </ul>
+
+    <h2>Resurse utile</h2>
+    <ul>
+      <li>Microsoft – <code>ArgumentNullException.ThrowIfNull</code></li>
+      <li>Microsoft – <code>System.Diagnostics.Debug.Assert</code></li>
+      <li>Ardalis.GuardClauses (GitHub)</li>
+      <li>OWASP – Input Validation Cheat Sheet</li>
+    </ul>
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear())</script> · Scris de Munteanu Silviu-Cristian
+  </footer>
+</body>
+</html>
