@@ -62,80 +62,86 @@
     // logica continuă doar cu date valide
 }</code></pre>
 
-  <h2>2) Ce sunt Assertions?</h2>
-  <p>
-    <strong>Assertion</strong> este un mecanism folosit în timpul dezvoltării și testării pentru a verifica dacă presupunerile interne ale programului sunt corecte.
-  </p>
-  <p>📌 <em>Ideea:</em> „Eu, ca programator, știu că în acest punct al codului ceva trebuie să fie adevărat. Dacă nu e → am un bug.”</p>
-  <p><strong>Exemplu din viața reală:</strong> îți verifici portofelul după ce ai plătit la casă. Te aștepți să mai ai cardul acolo. Dacă nu e → ceva nu a mers bine în procesul tău.</p>
-  <ul>
-    <li>folosite mai ales în <em>Debug/Testing</em>, nu pentru inputul utilizatorului;</li>
-    <li>dacă pică, semnalează o problemă de implementare;</li>
-    <li>în .NET, se folosesc cu <code>Debug.Assert</code>.</li>
-  </ul>
+<h2>2) Assertion Methods (ca Guard Clauses reutilizabile)</h2>
+<p>
+  <strong>Assertion Methods</strong> sunt metode statice de validare pe care le scrii o singură dată și apoi le folosești ca „mini-guard clauses” în toată aplicația.
+  Sunt parte din <em>Defensive Programming</em>: reduc codul duplicat, mențin regulile consecvente și păstrează logica de business curată.
+</p>
 
-  <pre><code class="lang-csharp">using System.Diagnostics;
+<div class="tip">
+  <strong>Pe scurt:</strong> un <em>guard clause</em> extras într-o metodă reutilizabilă = <em>assertion method</em>.
+</div>
 
-public Order MapToOrder(OrderDto dto)
+<h3>Exemplu 1 — Valoare pozitivă</h3>
+<pre><code class="lang-csharp">// Assertion Method
+public static class Ensure
 {
-    Debug.Assert(dto != null, "DTO validat deja la intrare.");
+    public static void Positive(decimal number, string message, string? paramName = null)
+    {
+        if (number <= 0) throw new ArgumentException(message, paramName);
+    }
+}
 
-    var order = new Order(dto.Id, dto.CustomerId);
-    Debug.Assert(order.Id != Guid.Empty, "Id nu trebuie să fie gol.");
-
-    return order;
-}</code></pre>
-
-
-    <h2>3) Împreună, într-un API</h2>
-    <pre><code class="lang-csharp">[HttpPost("users")]
-public IActionResult Post(RegisterUserDto dto)
+// Folosire ca Guard Clause
+public void CreateInvoice(decimal amount)
 {
-    // Guard: input din exterior
-    if (string.IsNullOrWhiteSpace(dto.Email))
-        return BadRequest("Email necesar");
+    Ensure.Positive(amount, "Valoarea facturii trebuie să fie > 0.", nameof(amount));
+    Console.WriteLine($"Factură creată cu {amount} lei.");
+}
+</code></pre>
 
-    _userService.Register(dto.Email, dto.Age); // aici pot avea Debug.Assert pentru invariante interne
-    return Ok();
-}</code></pre>
+<h3>Exemplu 2 — Email valid (simplu)</h3>
+<pre><code class="lang-csharp">public static class Ensure
+{
+    public static void ValidEmail(string email, string message, string? paramName = null)
+    {
+        if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
+            throw new ArgumentException(message, paramName);
+    }
+}
 
-  <h2>4) Diferența cheie</h2>
-  <ul>
-    <li><strong>Guard Clauses:</strong> pentru date din <em>afară</em> (utilizator, API, fișiere, baze de date).</li>
-    <li><strong>Assertions:</strong> pentru <em>invariante interne</em> (logica ta trebuie să respecte anumite reguli).</li>
-  </ul>
+// Folosire
+public void RegisterUser(string email)
+{
+    Ensure.ValidEmail(email, "Email-ul introdus nu este valid.", nameof(email));
+    Console.WriteLine("User înregistrat cu succes!");
+}
+</code></pre>
 
-  <h2>5) Cum lucrează împreună?</h2>
-  <p>Un proiect matur le folosește pe amândouă:</p>
-  <ul>
-    <li><strong>Guard Clauses</strong> filtrează gunoiul din exterior.</li>
-    <li><strong>Assertions</strong> confirmă că logica internă a codului e solidă.</li>
-  </ul>
-  <p>Împreună oferă un dublu nivel de protecție:</p>
-  <ul>
-    <li>Evită date invalide.</li>
-    <li>Evită bug-uri ascunse.</li>
-  </ul>
-    <h2>Regula ușoară</h2>
-    <ul>
-      <li><strong>Input din afară</strong> (user, API, fișiere) → <em>Guard clause</em>.</li>
-      <li><strong>Invariante interne</strong> („nu ar trebui să se întâmple”) → <em>Assertion</em>.</li>
-    </ul>
+<h3>Exemplu 3 — Nu null / nu gol (helper clasic)</h3>
+<pre><code class="lang-csharp">public static class Ensure
+{
+    public static string NotNullOrWhiteSpace(string? value, string message, string? paramName = null)
+    {
+        if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException(message, paramName);
+        return value!;
+    }
+}
 
-    <h2>Greșeli frecvente</h2>
-    <ul>
-      <li>Folosirea <em>Assert</em> pentru input de la utilizator (utilizatorul nu vede nimic în producție).</li>
-      <li>Mesaje vagi („Invalid data”) – spune clar <em>ce</em> e greșit.</li>
-      <li>Validări duplicate la fiecare strat fără motiv.</li>
-    </ul>
+// Folosire + chaining
+public void CreateProject(string name, decimal budget)
+{
+    var safeName = Ensure.NotNullOrWhiteSpace(name, "Numele proiectului este obligatoriu.", nameof(name));
+    Ensure.Positive(budget, "Bugetul trebuie să fie > 0.", nameof(budget));
 
-    <h2>Resurse utile</h2>
-    <ul>
-      <li>Microsoft – <code>ArgumentNullException.ThrowIfNull</code></li>
-      <li>Microsoft – <code>System.Diagnostics.Debug.Assert</code></li>
-      <li>Ardalis.GuardClauses (GitHub)</li>
-      <li>OWASP – Input Validation Cheat Sheet</li>
-    </ul>
+    // logica continuă doar cu date valide
+    Console.WriteLine($"Proiect '{safeName}' cu buget {budget} lei.");
+}
+</code></pre>
+
+<h3>De ce să le folosești</h3>
+<ul>
+  <li><strong>Mai curat:</strong> extragi <code>if</code>-urile repetitive într-un singur loc.</li>
+  <li><strong>Reutilizabil:</strong> aceeași regulă se aplică în multe servicii/straturi.</li>
+  <li><strong>Ușor de schimbat:</strong> dacă regula evoluează (ex. email cu regex), modifici o singură metodă.</li>
+  <li><strong>Fail-fast consecvent:</strong> arunci excepții clare (ex. <code>ArgumentException</code> / <code>ArgumentOutOfRangeException</code>).</li>
+</ul>
+
+<div class="tip">
+  <strong>Sfat practic:</strong> păstrează metodele în clasa statică <code>Ensure</code> (sau <code>Guard</code>) dintr-un proiect comun.
+  Astfel, toate serviciile folosesc aceleași reguli.
+</div>
+
   </main>
 
   <footer>
