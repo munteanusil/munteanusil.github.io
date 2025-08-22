@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CQRS pe înțelesul tuturor (ASP.NET MVC + EF) — ghid scurt, cu exemplu</title>
+  <meta name="description" content="CQRS explicat pe scurt: diferența față de CQS, beneficii reale, cum îl aplici în ASP.NET MVC + Entity Framework și un exemplu mic dar complet." />
+  <link rel="canonical" href="https://munteanusil.github.io/cqrs-mvc-ef.html"/>
+
+  <style>
+    :root{
+      --bg:#ffffff; --text:#0f172a; --muted:#475569; --card:#f8fafc; --line:#e2e8f0;
+      --brand:#0ea5e9; --ok:#16a34a; --warn:#ca8a04; --bad:#dc2626; --codebg:#0b1020; --codefg:#e5e7eb;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#0b0e14; --text:#e6e8ed; --muted:#aab1c0; --card:#11151f; --line:#1f2937;
+        --brand:#7dcfff; --ok:#22c55e; --warn:#eab308; --bad:#f87171; --codebg:#0b1020; --codefg:#e5e7eb;
+      }
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,sans-serif}
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    header{padding:2rem 1rem;border-bottom:1px solid var(--line);background:var(--card)}
+    .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+    h1{font-size:clamp(28px,4.5vw,40px);margin:.25rem 0}
+    .lead{color:var(--muted);max-width:780px}
+    main{display:grid;grid-template-columns:260px 1fr;gap:24px}
+    nav{position:sticky;top:12px;align-self:start;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px}
+    nav h3{margin:0 0 8px;font-size:14px;color:var(--muted)}
+    nav a{display:block;font-size:14px;color:var(--muted);padding:6px 6px;border-radius:8px}
+    nav a:hover{background:rgba(14,165,233,.1);color:var(--text)}
+    section{padding:18px 0;border-bottom:1px solid var(--line)}
+    section:last-of-type{border-bottom:none}
+    h2{font-size:22px;margin:0 0 8px}
+    h3{font-size:18px;margin:16px 0 8px}
+    p{margin:.75rem 0}
+    ul,ol{margin:.5rem 0 .5rem 1.25rem}
+    .callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);padding:12px;border-radius:12px;margin:12px 0}
+    .tip{border-left-color:var(--ok)}
+    .warn{border-left-color:var(--warn)}
+    .pitfall{border-left-color:var(--bad)}
+    pre{background:var(--codebg);color:var(--codefg);padding:14px;border-radius:12px;overflow:auto;border:1px solid #111827}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .diagram{background:var(--card);border:1px dashed var(--line);padding:10px;border-radius:10px}
+    footer{border-top:1px solid var(--line);color:var(--muted);padding:18px 0;margin-top:24px;text-align:center}
+    @media (max-width: 980px){
+      main{grid-template-columns:1fr}
+      nav{position:static}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>CQRS pe înțelesul tuturor (ASP.NET MVC + EF)</h1>
+      <p class="lead">Separi citirile (Query) de scrieri (Command). Atât. Mai jos: diferența față de CQS, beneficii reale, cum îl pui în practică în MVC + EF și un exemplu mic dar complet.</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <main>
+      <nav aria-label="Cuprins">
+        <h3>Cuprins</h3>
+        <a href="#cqs-vs-cqrs">CQS vs CQRS</a>
+        <a href="#beneficii">Beneficii reale</a>
+        <a href="#arhitectura">Arhitectură în MVC + EF</a>
+        <a href="#exemplu">Exemplu mic</a>
+        <a href="#pasii">Pașii tăi</a>
+        <a href="#resurse">Resurse</a>
+      </nav>
+
+      <article>
+        <section id="cqs-vs-cqrs">
+          <h2>CQS vs CQRS — pune-le corect în cap</h2>
+          <div class="callout">
+            <strong>CQS</strong> (Command–Query Separation, by Meyer): o metodă <em>ori</em> modifică stare (command), <em>ori</em> returnează date (query), dar nu ambele.<br/>
+            <strong>CQRS</strong> (Command–Query Responsibility Segregation): separi responsabilitățile în <em>straturi/obiecte diferite</em> pentru citiri vs scrieri (handler-e, modele, pipeline-uri separate).
+          </div>
+          <div class="diagram"><pre>CQS = regulă de design la nivel de metodă
+CQRS = arhitectură ce decuplează citirile de scrieri (handler-e, DTO-uri, modele separate)</pre></div>
+          <div class="callout tip">
+            <strong>Pe scurt:</strong> CQS e o regulă, CQRS e o arhitectură. Le poți folosi împreună fără probleme.
+          </div>
+        </section>
+
+        <section id="beneficii">
+          <h2>Beneficii reale (care contează mâine, nu în teorie)</h2>
+          <ul>
+            <li><strong>Claritate:</strong> clase mici, un scop unic — ușor de citit/testat.</li>
+            <li><strong>Control pe EF:</strong> context scurt în handler → mai puține efecte secundare.</li>
+            <li><strong>Perf & scalare:</strong> query-urile devin „optimizabile” separat (proiecții, cache, view-uri).</li>
+            <li><strong>Cross-cutting:</strong> autorizare, log, retry printr-un dispatcher/pipe fără să atingi handler-ele.</li>
+          </ul>
+          <div class="callout warn">
+            <strong>Nu exagera:</strong> pentru CRUD simplu, clasa „service” e suficientă. CQRS are sens când domainul cere claritate/performanță pe citiri sau reguli serioase la scrieri.
+          </div>
+        </section>
+
+        <section id="arhitectura">
+          <h2>Arhitectură în ASP.NET MVC + Entity Framework</h2>
+          <div class="diagram"><pre>GET (citire)
+Browser → Controller → QueryHandler → EF (SELECT) → ViewModel → View (HTML)
+
+POST (scriere)
+Browser → Controller → CommandHandler → EF (INSERT/UPDATE/DELETE) → rezultat → Redirect/JSON</pre></div>
+          <p>În proiecte reale vei introduce un <em>Dispatcher</em> (sau MediatR) între Controller și Handler pentru decuplare și cross-cutting.</p>
+        </section>
+
+        <section id="exemplu">
+          <h2>Exemplu mic (To-Do) — Query + Command + Handlers</h2>
+
+<pre><code>// Domain/TaskItem.cs
+public class TaskItem
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "";
+    public bool IsDone { get; set; }
+}
+
+// Infrastructure/AppDbContext.cs (EF6)
+using System.Data.Entity;
+public class AppDbContext : DbContext
+{
+    public AppDbContext() : base("DefaultConnection") {}
+    public DbSet&lt;TaskItem&gt; Tasks { get; set; }
+}
+</code></pre>
+
+<pre><code>// Application/Abstractions.cs
+public interface IQuery&lt;TResult&gt; {}
+public interface IQueryHandler&lt;TQuery,TResult&gt; where TQuery : IQuery&lt;TResult&gt; { TResult Handle(TQuery q); }
+
+public interface ICommand {}
+public sealed class CommandResult
+{
+    public bool Success { get; init; }
+    public string Message { get; init; }
+    public object Data { get; init; }
+}
+public interface ICommandHandler&lt;TCommand&gt; where TCommand : ICommand { CommandResult Handle(TCommand c); }
+</code></pre>
+
+<pre><code>// Application/Queries/GetAllTasks.cs
+using System.Collections.Generic;
+public sealed class GetAllTasks : IQuery&lt;List&lt;TaskVm&gt;&gt; {}
+
+public sealed class TaskVm
+{
+    public int Id { get; init; }
+    public string Title { get; init; }
+    public bool IsDone { get; init; }
+}
+</code></pre>
+
+<pre><code>// Application/Queries/GetAllTasksHandler.cs
+using System.Collections.Generic;
+using System.Linq;
+public sealed class GetAllTasksHandler : IQueryHandler&lt;GetAllTasks, List&lt;TaskVm&gt;&gt;
+{
+    public List&lt;TaskVm&gt; Handle(GetAllTasks q)
+    {
+        using (var db = new AppDbContext())
+        {
+            return db.Tasks
+                     .OrderBy(t =&gt; t.IsDone).ThenBy(t =&gt; t.Id)
+                     .Select(t =&gt; new TaskVm { Id = t.Id, Title = t.Title, IsDone = t.IsDone })
+                     .ToList();
+        }
+    }
+}
+</code></pre>
+
+<pre><code>// Application/Commands/AddTask.cs
+public sealed class AddTask : ICommand
+{
+    public string Title { get; init; }
+}
+
+public sealed class AddTaskHandler : ICommandHandler&lt;AddTask&gt;
+{
+    public CommandResult Handle(AddTask c)
+    {
+        if (string.IsNullOrWhiteSpace(c.Title))
+            return new CommandResult { Success = false, Message = "Title is required." };
+
+        using (var db = new AppDbContext())
+        {
+            var entity = new TaskItem { Title = c.Title.Trim(), IsDone = false };
+            db.Tasks.Add(entity);
+            db.SaveChanges();
+            return new CommandResult { Success = true, Data = entity.Id };
+        }
+    }
+}
+</code></pre>
+
+<pre><code>// Controllers/TasksController.cs (MVC 5)
+using System.Web.Mvc;
+using System.Collections.Generic;
+
+public class TasksController : Controller
+{
+    public ActionResult Index()
+    {
+        var list = new GetAllTasksHandler().Handle(new GetAllTasks());
+        return View(list); // model: List&lt;TaskVm&gt;
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public ActionResult Add(string title)
+    {
+        var result = new AddTaskHandler().Handle(new AddTask{ Title = title });
+        if (!result.Success) TempData["Error"] = result.Message;
+        return RedirectToAction("Index");
+    }
+}
+</code></pre>
+
+<pre><code>@* Views/Tasks/Index.cshtml *@
+@model List&lt;TaskVm&gt;
+&lt;h2&gt;To-Do&lt;/h2&gt;
+
+@if (TempData["Error"] != null){ &lt;p style="color:#dc2626"&gt;@TempData["Error"]&lt;/p&gt; }
+
+&lt;form method="post" action="/Tasks/Add"&gt;
+  @Html.AntiForgeryToken()
+  &lt;input name="title" placeholder="Task title" required /&gt;
+  &lt;button type="submit"&gt;Add&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;ul&gt;
+@foreach (var t in Model) {
+  &lt;li&gt;@(t.IsDone ? "✅" : "⬜") @t.Title&lt;/li&gt;
+}
+&lt;/ul&gt;
+</code></pre>
+
+          <div class="callout tip">
+            <strong>De ce e „CQRS friendly”?</strong> Citirile (Query) nu ating starea; Scrierile (Command) schimbă starea și întorc un rezultat simplu. Controllerul e subțire. EF e ținut „scurt” în handler.
+          </div>
+
+          <h3>Unde intră Dispatcher-ul?</h3>
+          <p>În loc de <code>new Handler().Handle(...)</code> în Controller, vei apela <code>_bus.Query(q)</code> / <code>_bus.Send(cmd)</code>. Acolo pui logging, auth, metrics, retry — fără să atingi handler-ele.</p>
+        </section>
+
+        <section id="pasii">
+          <h2>Pașii tăi (mâine la job)</h2>
+          <ol>
+            <li>Fă foldere: <code>Application/Queries</code>, <code>Application/Commands</code>, <code>Infrastructure</code>.</li>
+            <li>Scrie primul Query + Handler (ViewModel clar pentru UI).</li>
+            <li>Scrie primul Command + Handler (validare minimă, SaveChanges).</li>
+            <li>Controllerul apelează handler-ele. Când devine clar, introdu un Dispatcher/DI.</li>
+            <li>Optimizează ulterior: cache pe Query, autorizare/Pipeline pe Command etc.</li>
+          </ol>
+          <div class="callout pitfall">
+            <strong>Greșeli comune:</strong> amesteci logică de UI în handler; returnezi din Command obiecte grele (păstrează <em>CommandResult</em> simplu); faci CQRS „peste tot” unde nu aduce valoare.
+          </div>
+        </section>
+
+        <section id="resurse">
+          <h2>Resurse</h2>
+          <ul>
+            <li><em>Command & Query Separation (CQS)</em> — articol clasic (Bertrand Meyer).</li>
+            <li><em>CQRS — când merită și cum</em> — articole/ghiduri cu exemple MVC/EF și discuții despre dispatcher, proiecții și „validated writes”.</li>
+            <li>StackExchange — <em>What is the Command Dispatcher?</em> (de ce e un detaliu de decuplare, nu CQRS însuși).</li>
+          </ul>
+          <p class="muted">Notă: am păstrat stilul explicativ din articolele populare, dar codul/explicațiile de aici sunt originale.</p>
+        </section>
+
+        <footer>
+          © <script>document.write(new Date().getFullYear())</script> — Scris de Munteanu Silviu-Cristian
+        </footer>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
