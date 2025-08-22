@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CQRS pe înțelesul tuturor (ASP.NET MVC + Entity Framework) — exemplu mic</title>
+  <meta name="description" content="O explicație prietenoasă a CQRS, de ce merită, cum arată în MVC + EF și un exemplu mic-mic. Mai mult text clar, puțin cod." />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,sans-serif;margin:0;padding:0;line-height:1.65;color:#0f172a;background:#fff;}
+    header{padding:2rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;}
+    main{max-width:900px;margin:0 auto;padding:2rem 1rem;}
+    h1{font-size:2rem;margin:0 0 0.25rem 0;}
+    h2{margin-top:2rem;font-size:1.5rem}
+    h3{margin-top:1.25rem;font-size:1.2rem}
+    p{margin:0.75rem 0}
+    code, pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,monospace}
+    pre{background:#0b1020;color:#e5e7eb;padding:1rem;border-radius:8px;overflow:auto}
+    code{background:#f1f5f9;padding:0.15rem 0.35rem;border-radius:6px}
+    ul,ol{padding-left:1.25rem}
+    .note{background:#ecfeff;border:1px solid #a5f3fc;padding:0.75rem;border-radius:8px}
+    .diagram{background:#f8fafc;border:1px dashed #cbd5e1;padding:0.75rem;border-radius:8px}
+    .lead{font-size:1.05rem;color:#334155}
+    footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #e2e8f0;color:#475569}
+    a{color:#0ea5e9;text-decoration:none} a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+<header>
+  <h1>CQRS pe înțelesul tuturor (ASP.NET MVC + Entity Framework) — exemplu mic</h1>
+  <p class="lead">Separă citirile (Query) de scrieri (Command). Atât. Mai jos: de ce merită, cum arată în MVC + EF și un exemplu mic-mic, cu multă explicație și puțin cod.</p>
+</header>
+<main>
+
+<section id="ce-este">
+  <h2>Ce este CQRS, fără fum și oglinzi</h2>
+  <p><strong>CQRS</strong> = <em>Command and Query Responsibility Segregation</em>: separi <strong>citirile</strong> de <strong>scrieri</strong>. Nu e magie. Beneficiile cele mai vizibile:</p>
+  <ul>
+    <li><strong>Claritate</strong>: clase mici, fiecare cu un scop unic (o citire <em>sau</em> o modificare).</li>
+    <li><strong>Limbaj de business</strong>: comenzi cu nume „umane” (ex. <code>SignUpUserForEvent</code>), nu „SaveXyz”.</li>
+    <li><strong>Control pe EF</strong>: deschizi un <code>DbContext</code> în handler, faci treaba, închizi (mai puține efecte secundare).</li>
+  </ul>
+  <p class="note">În proiecte mari poți adăuga optimizări (citiri din proiecții denormalizate, scrieri pe cozi etc.). Pentru a înțelege însă ideea, e suficientă separarea clară <em>read/write</em>.</p>
+</section>
+
+<section id="idei">
+  <h2>Trei idei-cheie (ca pentru un copil de 10 ani)</h2>
+  <ol>
+    <li><strong>Query</strong> = întrebare: „Arată-mi lista de task-uri”. Îți întoarce <em>date de afișat</em>.</li>
+    <li><strong>Command</strong> = rugăminte de schimbare: „Adaugă un task nou”. Îți întoarce <em>succes/eroare</em> (și cel mult un Id).</li>
+    <li><strong>Dispatcher (Bus)</strong> = poștașul: ia o comandă/interogare și o duce la „omul potrivit” (handlerul). E un <em>detaliu de implementare</em> care decuplează expeditorul de executant.</li>
+  </ol>
+</section>
+
+<section id="flux">
+  <h2>Cum arată în ASP.NET MVC + EF (filmul în 2 poze)</h2>
+  <div class="diagram"><pre>Citire (Query)
+Browser → Controller (GET)
+        → QueryHandler → EF (doar SELECT)
+        → ViewModel → View (HTML)</pre></div>
+  <div class="diagram"><pre>Scriere (Command)
+Browser → Controller (POST, validare)
+        → CommandHandler → EF (INSERT/UPDATE/DELETE, SaveChanges)
+        → rezultat (succes/mesaj) → Redirect/JSON</pre></div>
+</section>
+
+<section id="exemplu">
+  <h2>Exemplu mic (multă explicație, puțin cod)</h2>
+  <p>Aplicație To-Do. Vrem: <strong>1)</strong> listă de task-uri (Query), <strong>2)</strong> adăugare task (Command).</p>
+
+  <h3>Model &amp; DbContext (Entity Framework)</h3>
+  <pre><code class="language-csharp">// Domain/TaskItem.cs
+public class TaskItem
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public bool IsDone { get; set; }
+}
+
+// Infrastructure/AppDbContext.cs
+using System.Data.Entity;
+
+public class AppDbContext : DbContext
+{
+    public AppDbContext() : base("DefaultConnection") { }
+    public DbSet&lt;TaskItem&gt; Tasks { get; set; }
+}</code></pre>
+  <p><strong>Ce înseamnă:</strong> <code>TaskItem</code> corespunde unui rând din tabelul <code>Tasks</code>. <code>AppDbContext</code> e „ușa” EF către DB. O deschidem doar când avem nevoie.</p>
+
+  <h3>Partea de Query (doar citire)</h3>
+  <pre><code class="language-csharp">// Application/Queries/Abstractions.cs
+public interface IQuery&lt;TResult&gt; {}
+public interface IQueryHandler&lt;TQuery, TResult&gt; where TQuery : IQuery&lt;TResult&gt;
+{
+    TResult Handle(TQuery query);
+}</code></pre>
+
+  <pre><code class="language-csharp">// Application/Queries/GetAllTasks.cs
+using System.Collections.Generic;
+using System.Linq;
+
+public sealed class GetAllTasks : IQuery&lt;List&lt;TaskVm&gt;&gt; {}
+
+public sealed class TaskVm   // ViewModel pentru UI
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public bool IsDone { get; set; }
+}
+
+// Application/Queries/GetAllTasksHandler.cs
+public sealed class GetAllTasksHandler : IQueryHandler&lt;GetAllTasks, List&lt;TaskVm&gt;&gt;
+{
+    public List&lt;TaskVm&gt; Handle(GetAllTasks q)
+    {
+        using (var db = new AppDbContext())
+        {
+            return db.Tasks
+                     .OrderBy(t =&gt; t.IsDone).ThenBy(t =&gt; t.Id)
+                     .Select(t =&gt; new TaskVm { Id = t.Id, Title = t.Title, IsDone = t.IsDone })
+                     .ToList();
+        }
+    }
+}</code></pre>
+  <p><strong>Ce se întâmplă:</strong> Query-ul e un „bilețel”: „Vreau toate task-urile”. Handler-ul creează contextul EF, citește și proiectează în <em>ViewModel</em>.</p>
+
+  <h3>Partea de Command (modificare)</h3>
+  <pre><code class="language-csharp">// Application/Commands/Abstractions.cs
+public interface ICommand {}
+
+public sealed class CommandResult
+{
+    public bool Success { get; set; }
+    public string Message { get; set; }
+    public object Data { get; set; } // ex: Id-ul nou
+}
+
+public interface ICommandHandler&lt;TCommand&gt; where TCommand : ICommand
+{
+    CommandResult Handle(TCommand command);
+}</code></pre>
+
+  <pre><code class="language-csharp">// Application/Commands/AddTask.cs
+public sealed class AddTask : ICommand
+{
+    public string Title { get; set; }
+}
+
+public sealed class AddTaskHandler : ICommandHandler&lt;AddTask&gt;
+{
+    public CommandResult Handle(AddTask cmd)
+    {
+        if (string.IsNullOrWhiteSpace(cmd.Title))
+            return new CommandResult { Success = false, Message = "Title is required." };
+
+        using (var db = new AppDbContext())
+        {
+            var entity = new TaskItem { Title = cmd.Title, IsDone = false };
+            db.Tasks.Add(entity);
+            db.SaveChanges();
+            return new CommandResult { Success = true, Data = entity.Id };
+        }
+    }
+}</code></pre>
+
+  <h3>Controller (fără DI/dispatcher — doar pentru claritate)</h3>
+  <pre><code class="language-csharp">// Controllers/TasksController.cs
+using System.Web.Mvc;
+using System.Collections.Generic;
+
+public class TasksController : Controller
+{
+    // GET: /Tasks
+    public ActionResult Index()
+    {
+        var vm = new GetAllTasksHandler().Handle(new GetAllTasks());
+        return View(vm); // vm = List&lt;TaskVm&gt;
+    }
+
+    // POST: /Tasks/Add
+    [HttpPost, ValidateAntiForgeryToken]
+    public ActionResult Add(string title)
+    {
+        var result = new AddTaskHandler().Handle(new AddTask { Title = title });
+        if (!result.Success) { TempData["Error"] = result.Message; }
+        return RedirectToAction("Index");
+    }
+}</code></pre>
+
+  <h3>View (Index.cshtml) — super simplu</h3>
+  <pre><code class="language-razor">@model List&lt;TaskVm&gt;
+
+&lt;h2&gt;To-Do&lt;/h2&gt;
+
+&lt;form method="post" action="/Tasks/Add"&gt;
+  @Html.AntiForgeryToken()
+  &lt;input name="title" placeholder="Task title" required /&gt;
+  &lt;button type="submit"&gt;Add&lt;/button&gt;
+&lt;/form&gt;
+
+@if (TempData["Error"] != null) {
+  &lt;p style="color:red"&gt;@TempData["Error"]&lt;/p&gt;
+}
+
+&lt;ul&gt;
+@foreach (var t in Model)
+{
+  &lt;li&gt;
+    @if (t.IsDone) { &lt;span&gt;✅&lt;/span&gt; } else { &lt;span&gt;⬜&lt;/span&gt; }
+    @t.Title
+  &lt;/li&gt;
+}
+&lt;/ul&gt;
+</code></pre>
+
+  <p><strong>Important:</strong> aici am apelat handler-ele <em>direct</em> din controller, ca să vezi ideea CQRS limpede. În proiecte reale, adaugi un <em>CommandDispatcher/QueryDispatcher</em> și/sau un container DI (Ninject/Autofac), așa cum arată și articolul citat: controller → dispatcher → handler.</p>
+</section>
+
+<section id="faq">
+  <h2>Întrebări frecvente (FAQ)</h2>
+  <p><strong>Trebuie repository pattern?</strong> Nu neapărat. În varianta simplă, handler-ele folosesc direct EF. Beneficiul rămâne: context scurt, logică clară.</p>
+  <p><strong>Unde fac validarea de UI?</strong> În ViewModel (Data Annotations) + <code>ModelState</code>. Dacă e valid, mapezi VM → Command și trimiți la handler (pattern „validated writes”).</p>
+  <p><strong>E obligatoriu Dispatcher?</strong> Nu. Dar îți oferă decuplare și un loc pentru cross-cutting (log, autorizare, tranzacții, retry) fără să atingi handler-ele.</p>
+  <p><strong>Cum testez?</strong> Testezi handler-ele izolat (fără MVC). QueryHandler = citire/proiecție; CommandHandler = scriere/reguli.</p>
+</section>
+
+<section id="pasi">
+  <h2>Pași simpli ca să-l aplici mâine</h2>
+  <ol>
+    <li>Creează foldere: <code>Application/Queries</code>, <code>Application/Commands</code>, <code>Infrastructure</code>.</li>
+    <li>Scrie primul <strong>Query</strong> + Handler: listă în ViewModel.</li>
+    <li>Scrie primul <strong>Command</strong> + Handler: creează entitate (validare minimă).</li>
+    <li>Cheamă-le din controller (fără dispatcher la început).</li>
+    <li>Când totul e clar, introdu un <strong>Dispatcher</strong> și/sau DI și înlocuiește apelurile directe cu <code>Dispatch(command/query)</code>.</li>
+  </ol>
+</section>
+
+<section id="resurse">
+  <h2>Resurse</h2>
+  <ul>
+    <li>Andy Butland — <em>A CQRS Implementation with ASP.NET MVC and Entity Framework</em> (exemple, diagrame, dispatcher + Ninject, <code>CommandResult</code>, „validated writes”). <a href="https://www.andybutland.dev/2014/08/cqrs-with-aspnet-mvc-entity-framework.html" target="_blank" rel="noopener">Citește articolul</a>.</li>
+    <li>Software Engineering StackExchange — <em>CQRS: What is the Command Dispatcher?</em> (de ce dispatcher/bus-ul e un detaliu de decuplare, nu însăși CQRS). <a href="https://softwareengineering.stackexchange.com/questions/363216/cqrs-what-is-the-command-dispatcher" target="_blank" rel="noopener">Vezi discuția</a>.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>© 2025 — Articol pentru GitHub Pages. Poți copia codul direct într-un proiect MVC 5 + EF și să-l rulezi în 10 minute.</p>
+</footer>
+
+</main>
+</body>
+</html>"""
+path = "/mnt/data/cqrs-mvc-ef.html"
+with open(path, "w", encoding="utf-8") as f:
+    f.write(html)
+path
