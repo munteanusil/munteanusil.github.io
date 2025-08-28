@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Extension Methods în C# – ghid prietenos + exemple utile</title>
-  <meta name="description" content="Ce sunt Extension Methods în C#, cum funcționează, bune practici și exemple utile: string, colecții, DateTime, HttpContext, LINQ.">
+  <title>Extension Methods în C# – explicație simplă</title>
+  <meta name="description" content="Extension Methods în C#: ce sunt, de ce există, când să le folosești și un exemplu mic pentru începători.">
   <link rel="canonical" href="https://munteanusil.github.io/extension-methods.html"/>
 
-  <!-- stiluri minime compatibile cu pagina principală -->
+  <!-- stiluri compatibile -->
   <style>
     :root{ --bg:#0b0e14; --card:#11151f; --text:#e6e8ed; --muted:#aab1c0; --brand:#7aa2f7; --max:980px; }
     @media (prefers-color-scheme: light){ :root{ --bg:#fff; --card:#f7f8fb; --text:#0f172a; --muted:#475569; --brand:#2457f5; } }
@@ -18,15 +18,11 @@
     .back{font-size:14px;color:var(--muted)}
     h1{font-size:clamp(26px,4.5vw,38px);margin:6px 0}
     .lead{color:var(--muted);margin:6px 0 18px}
-    .heroimg{width:100%;max-width:860px;margin:8px 0;border-radius:16px;background:#0c1220;padding:0;display:block;border:1px solid rgba(255,255,255,.08)}
     main{padding:20px 0 60px}
     h2{margin:28px 0 8px;font-size:22px}
-    h3{margin:18px 0 8px;font-size:18px}
     pre{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;overflow:auto}
     code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-    .tip,.warn{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;color:var(--muted)}
-    .warn{border-left:4px solid #f87171}
-    .tip{border-left:4px solid #22c55e}
+    .tip{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;color:var(--muted)}
     footer{border-top:1px solid rgba(255,255,255,.08);color:var(--muted);padding:18px 0;text-align:center}
   </style>
 </head>
@@ -35,205 +31,69 @@
     <div class="wrap">
       <a class="back" href="index.html">← Înapoi la acasă</a>
       <h1>Extension Methods în C#</h1>
-      <p class="lead">Adaugi „metode” la tipuri pe care nu le poți modifica. Elegant, sigur și extrem de util pentru cod mai curat.</p>
-      <!-- Pune aici o imagine dacă vrei (ex: assets/images/extension-methods.png) -->
-      <img class="heroimg" src="assets/images/extension-methods.png" alt="Extension Methods în C# — ilustrație"> 
+      <p class="lead">„Adaugi metode la tipuri care nu sunt ale tale.” Simplu, elegant și foarte folosit în .NET (de exemplu în LINQ).</p>
     </div>
   </header>
 
   <main class="wrap">
 
-    <h2>1) Ideea pe scurt</h2>
+    <h2>1) Ce sunt Extension Methods?</h2>
     <p>
-      Un <strong>Extension Method</strong> îți permite să „extinzi” un tip existent (ex. <code>string</code>, <code>IEnumerable&lt;T&gt;</code>, chiar tipuri din .NET sau din terțe librării)
-      <em>fără</em> să-i modifici codul. Tehnic, e o metodă statică într-o clasă statică, iar primul parametru are cuvântul cheie <code>this</code>.
-      Când importi <code>namespace</code>-ul, metoda apare ca și cum ar fi membru nativ al tipului.
+      Un <strong>Extension Method</strong> este o metodă specială care îți permite să adaugi funcționalitate
+      unui tip deja existent (<code>string</code>, <code>DateTime</code>, <code>IEnumerable</code> etc.)
+      fără să modifici codul sursă al acelui tip.
+    </p>
+    <p>
+      Tehnic, scrii o metodă statică într-o clasă statică, dar cu un mic „truc”: primul parametru are cuvântul cheie
+      <code>this</code>. Asta îi spune compilatorului că metoda se poate apela ca și cum ar fi parte din acel tip.
     </p>
 
-    <pre><code class="lang-csharp">// 1) Clasă statică + metodă statică
-public static class StringExtensions
-{
-    // 2) Primul parametru are 'this' pe tipul pe care-l extinzi
-    public static bool IsNullOrWhiteSpace(this string? value)
-        =&gt; string.IsNullOrWhiteSpace(value);
-}
-
-// Folosire (după using NamespaceCuExtensia):
-// "  ".IsNullOrWhiteSpace()  // true
-</code></pre>
-
     <div class="tip">
-      <strong>Reține:</strong> Extension Methods nu modifică tipul la runtime — sunt sintaxă „zahăr” peste apelul unei metode statice. Sunt rezolvate la compilare.
+      Exemplu clasic: LINQ. Metode precum <code>.Where()</code>, <code>.Select()</code>, <code>.OrderBy()</code>
+      sunt toate extension methods scrise peste <code>IEnumerable&lt;T&gt;</code>.
     </div>
 
-    <h2>2) Reguli rapide (ca să nu te lovești)</h2>
+    <h2>2) De ce sunt utile?</h2>
     <ul>
-      <li>Clasa care conține extensia trebuie să fie <strong>statică</strong>.</li>
-      <li>Metoda trebuie să fie <strong>statică</strong>.</li>
-      <li>Primul parametru are <code>this Tip</code> și reprezintă „instanța extinsă”.</li>
-      <li>Extensiile devin vizibile acolo unde ai <code>using</code> pe namespace-ul clasei.</li>
-      <li>Poți extinde <em>orice</em> tip: clase, structuri, interfețe (inclusiv tipuri din framework).</li>
+      <li><strong>Cod mai curat:</strong> logica ta apare direct lângă tipul pe care îl folosești.</li>
+      <li><strong>Reutilizare:</strong> poți împacheta reguli și mici helperi pe care să-i refolosești în toată aplicația.</li>
+      <li><strong>Nu atingi codul existent:</strong> utile când vrei să „extinzi” tipuri din .NET sau din librării externe.</li>
     </ul>
 
-    <h2>3) Exemple utile</h2>
+    <h2>3) Exemplu mic</h2>
+    <p>Vrem o metodă care verifică dacă un string are doar litere mari.</p>
 
-    <h3>3.1) String helpers (sanitizare)</h3>
-    <pre><code class="lang-csharp">public static class StringExtensions
+<pre><code class="lang-csharp">public static class StringExtensions
 {
-    public static string? NullIfEmpty(this string? value)
-        =&gt; string.IsNullOrEmpty(value) ? null : value;
-
-    public static string TrimToNull(this string? value)
+    public static bool IsAllUpper(this string input)
     {
-        var t = value?.Trim();
-        return string.IsNullOrEmpty(t) ? null : t;
-    }
-
-    public static string ToSlug(this string value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return "";
-        var slug = value.Trim().ToLowerInvariant()
-                        .Replace('ă','a').Replace('â','a').Replace('î','i')
-                        .Replace('ș','s').Replace('ş','s').Replace('ț','t').Replace('ţ','t');
-        // simplu: spatii -> -, elimină duble
-        slug = System.Text.RegularExpressions.Regex.Replace(slug, @"\s+", "-");
-        slug = System.Text.RegularExpressions.Regex.Replace(slug, @"[^a-z0-9\-]", "");
-        return slug.Trim('-');
+        return !string.IsNullOrEmpty(input) && input.All(char.IsUpper);
     }
 }
 
-// "  Hello  ".TrimToNull(); // "Hello"
-// "Salut Lume ȘÎȚ".ToSlug(); // "salut-lume-sit"
+// Folosire:
+Console.WriteLine("HELLO".IsAllUpper()); // True
+Console.WriteLine("Hello".IsAllUpper()); // False
 </code></pre>
 
-    <h3>3.2) Colecții: IEnumerable&lt;T&gt;</h3>
-    <pre><code class="lang-csharp">public static class EnumerableExtensions
-{
-    // Aplică o acțiune pe fiecare element (cu index)
-    public static void ForEach&lt;T&gt;(this IEnumerable&lt;T&gt; source, Action&lt;T,int&gt; action)
-    {
-        if (source == null) throw new ArgumentNullException(nameof(source));
-        if (action == null) throw new ArgumentNullException(nameof(action));
-        var i = 0;
-        foreach (var item in source) action(item, i++);
-    }
+    <p>
+      Observă cum <code>"HELLO".IsAllUpper()</code> pare o metodă <em>nativă</em> pe string,
+      deși noi am scris-o separat într-o clasă statică.
+    </p>
 
-    // Divizează o listă în „batch”-uri
-    public static IEnumerable&lt;IReadOnlyList&lt;T&gt;&gt; ChunkBy&lt;T&gt;(this IEnumerable&lt;T&gt; source, int size)
-    {
-        if (size &lt;= 0) throw new ArgumentOutOfRangeException(nameof(size));
-        var batch = new List&lt;T&gt;(size);
-        foreach (var item in source)
-        {
-            batch.Add(item);
-            if (batch.Count == size) { yield return batch; batch = new List&lt;T&gt;(size); }
-        }
-        if (batch.Count &gt; 0) yield return batch;
-    }
-}
-
-// new[]{1,2,3,4,5}.ChunkBy(2) -> [ [1,2], [3,4], [5] ]
-</code></pre>
-
-    <h3>3.3) Date/Time: intervale prietenoase</h3>
-    <pre><code class="lang-csharp">public static class DateTimeExtensions
-{
-    public static bool IsWeekend(this DateTime d)
-        =&gt; d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday;
-
-    public static string ToRelativeText(this DateTime dt, DateTime? now = null)
-    {
-        var n = now ?? DateTime.UtcNow;
-        var delta = n - dt;
-        if (delta.TotalSeconds &lt; 60) return "acum";
-        if (delta.TotalMinutes &lt; 60) return $"{(int)delta.TotalMinutes} min în urmă";
-        if (delta.TotalHours &lt; 24) return $"{(int)delta.TotalHours} ore în urmă";
-        return $"{(int)delta.TotalDays} zile în urmă";
-    }
-}
-</code></pre>
-
-    <h3>3.4) ASP.NET: HttpRequest/HttpContext (exemplu simplu)</h3>
-    <pre><code class="lang-csharp">public static class HttpRequestExtensions
-{
-    public static bool IsAjax(this System.Web.HttpRequest request)
-        =&gt; string.Equals(request?.Headers["X-Requested-With"], "XMLHttpRequest",
-                         StringComparison.OrdinalIgnoreCase);
-}
-
-// if (Request.IsAjax()) { ... }
-</code></pre>
-
-    <h2>4) Extensii generice & constrângeri</h2>
-    <p>Poți scrie extensii generice cu constrângeri pentru a lucra elegant cu tipuri care expun anumite membri.</p>
-    <pre><code class="lang-csharp">public interface IHasId { int Id { get; } }
-
-public static class QueryableExtensions
-{
-    public static T? FindById&lt;T&gt;(this IEnumerable&lt;T&gt; source, int id) where T : IHasId
-        =&gt; source.FirstOrDefault(x =&gt; x.Id == id);
-}
-</code></pre>
-
-    <h2>5) Bune practici</h2>
+    <h2>4) Bune practici</h2>
     <ul>
-      <li><strong>Păstrează-le coezive</strong> (grupează pe topic: <code>StringExtensions</code>, <code>DateTimeExtensions</code> etc.).</li>
-      <li><strong>Nu „ascunde” efecte secundare</strong>: extensiile ar trebui să fie ușor de intuit, fără surprize.</li>
-      <li><strong>Nu concura API-ul standard</strong> (ex. nu reinventa <code>Any</code>, <code>Count</code> etc.). Extinde unde lipsește o „mică piesă” în puzzle-ul tău.</li>
-      <li><strong>Evita ambiguitățile</strong>: nume clare și namespace-uri stabile. Dacă apar două extensii cu același nume, <code>using</code>-urile pot crea confuzii.</li>
-      <li><strong>Documentează</strong> (XML comments) — IntelliSense devine prietenul echipei.</li>
+      <li>Pune extensiile în clase statice cu nume clar (<code>StringExtensions</code>, <code>DateTimeExtensions</code>).</li>
+      <li>Nu abuza: folosește-le pentru mici ajutoare, nu pentru a ascunde logici complicate.</li>
+      <li>Documentează cu comentarii XML ca să apară în IntelliSense.</li>
     </ul>
 
-    <div class="warn">
-      <strong>Capcană comună:</strong> Nu folosi extensii pentru „a ocoli” vizibilitatea/encapsularea proastă.
-      Dacă ai nevoie să umbli la starea internă a unui tip, ai o problemă de design — nu o rezolva prin extensii.
-    </div>
-
-    <h2>6) Exemple „bonus”</h2>
-
-    <h3>6.1) Fluent Guard (combinat cu extension)</h3>
-    <pre><code class="lang-csharp">public static class GuardExtensions
-{
-    public static T NotNull&lt;T&gt;(this T? value, string name) where T : class
-        =&gt; value ?? throw new ArgumentNullException(name);
-
-    public static string NotNullOrWhiteSpace(this string? value, string name)
-        =&gt; !string.IsNullOrWhiteSpace(value) ? value! : throw new ArgumentException($"{name} e gol.");
-}
-
-// var name = input.NotNullOrWhiteSpace(nameof(input));
-</code></pre>
-
-    <h3>6.2) LINQ „quality of life”</h3>
-    <pre><code class="lang-csharp">public static class LinqExtensions
-{
-    // Safe FirstOrDefault cu fallback
-    public static T FirstOr&lt;T&gt;(this IEnumerable&lt;T&gt; source, T fallback)
-        =&gt; source.FirstOrDefault() ?? fallback;
-
-    // DistinctBy fără a adăuga dependențe (simplu)
-    public static IEnumerable&lt;TSource&gt; DistinctBy&lt;TSource,TKey&gt;(
-        this IEnumerable&lt;TSource&gt; source, Func&lt;TSource,TKey&gt; keySelector)
-    {
-        var set = new HashSet&lt;TKey&gt;();
-        foreach (var item in source)
-            if (set.Add(keySelector(item))) yield return item;
-    }
-}
-</code></pre>
-
-    <h2>7) Când să nu le folosești</h2>
-    <ul>
-      <li>Când extensia ar masca un API existent sau ar crea confuzie semantică.</li>
-      <li>Când extensia are efecte secundare „grele” (I/O, tranzacții) — mai bine folosește servicii clasice.</li>
-      <li>Când extensia introduce dependențe neașteptate (de exemplu, o extensie pe <code>string</code> care citește configurația aplicației).</li>
-    </ul>
-
-    <h2>8) Resurse</h2>
-    <ul>
-      <li>Documentația oficială C# — <em>Extension Methods</em> (sintaxă, rezoluție, exemple). </li>
-      <li>Articole introductive cu exemple practice (concepte de bază, utilitare pe string/colecții/DateTime).</li>
-    </ul>
+    <h2>5) Concluzie</h2>
+    <p>
+      Extension Methods sunt o unealtă simplă dar puternică, care fac codul mai lizibil și mai expresiv.
+      Dacă ai folosit LINQ, deja le folosești zilnic. Scrise cu grijă, pot să devină „scurtăturile”
+      care îți fac viața de developer mai ușoară.
+    </p>
 
   </main>
 
