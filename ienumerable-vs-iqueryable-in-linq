@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IEnumerable vs IQueryable în C# – explicație simplă</title>
+  <meta name="description" content="Diferențele dintre IEnumerable și IQueryable în C#: ce sunt, cum funcționează și când să le folosești, cu exemple practice.">
+  <link rel="canonical" href="https://munteanusil.github.io/ienumerable-vs-iqueryable.html"/>
+
+  <!-- stiluri compatibile -->
+  <style>
+    :root{ --bg:#0b0e14; --card:#11151f; --text:#e6e8ed; --muted:#aab1c0; --brand:#7aa2f7; --max:980px; }
+    @media (prefers-color-scheme: light){ :root{ --bg:#fff; --card:#f7f8fb; --text:#0f172a; --muted:#475569; --brand:#2457f5; } }
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
+    header{padding:32px 0 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .back{font-size:14px;color:var(--muted)}
+    h1{font-size:clamp(26px,4.5vw,38px);margin:6px 0}
+    .lead{color:var(--muted);margin:6px 0 18px}
+    main{padding:20px 0 60px}
+    h2{margin:28px 0 8px;font-size:22px}
+    pre{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .tip{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;color:var(--muted)}
+    footer{border-top:1px solid rgba(255,255,255,.08);color:var(--muted);padding:18px 0;text-align:center}
+    table{width:100%;border-collapse:collapse;margin:16px 0}
+    th,td{border:1px solid rgba(255,255,255,.08);padding:8px;text-align:left}
+    th{background:var(--card)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="back" href="index.html">← Înapoi la acasă</a>
+      <h1>IEnumerable vs IQueryable în C#</h1>
+      <p class="lead">Două interfețe foarte folosite în LINQ și Entity Framework. Află diferențele și când să le folosești.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <h2>1) Ce este <code>IEnumerable&lt;T&gt;</code>?</h2>
+    <p>
+      <strong>IEnumerable</strong> este o interfață definită în <code>System.Collections</code> și folosită pentru
+      a parcurge colecții deja încărcate în memorie: <code>List&lt;T&gt;</code>, <code>Array</code>, etc.
+    </p>
+    <p>
+      Operațiile LINQ pe <code>IEnumerable</code> sunt executate <em>în memorie</em> după ce toate datele au fost aduse.
+    </p>
+
+<pre><code class="lang-csharp">IEnumerable&lt;int&gt; numbers = new List&lt;int&gt; {1, 2, 3, 4, 5};
+var result = numbers.Where(n =&gt; n &gt; 3);
+
+foreach (var n in result)
+    Console.WriteLine(n); // filtrează după ce lista este în memorie
+</code></pre>
+
+    <div class="tip">
+      ✔ Bun pentru colecții mici și pentru logica simplă aplicată în client.
+    </div>
+
+    <h2>2) Ce este <code>IQueryable&lt;T&gt;</code>?</h2>
+    <p>
+      <strong>IQueryable</strong> este definită în <code>System.Linq</code> și este folosită când datele
+      provin din surse externe (de exemplu baze de date, prin Entity Framework).
+    </p>
+    <p>
+      Operațiile LINQ pe <code>IQueryable</code> se traduc în SQL (sau alt limbaj) și sunt executate direct pe server.
+    </p>
+
+<pre><code class="lang-csharp">IQueryable&lt;Student&gt; students = context.Students.Where(s =&gt; s.Age &gt; 18);
+var top2 = students.Take(2);
+
+// tradus în SQL: SELECT TOP (2) * FROM Students WHERE Age &gt; 18
+</code></pre>
+
+    <div class="tip">
+      ✔ Ideal pentru seturi mari de date, deoarece filtrarea se face pe server.
+    </div>
+
+    <h2>3) Tabel comparativ</h2>
+    <table>
+      <tr>
+        <th>Caracteristică</th>
+        <th>IEnumerable</th>
+        <th>IQueryable</th>
+      </tr>
+      <tr>
+        <td>Namespace</td>
+        <td><code>System.Collections</code></td>
+        <td><code>System.Linq</code></td>
+      </tr>
+      <tr>
+        <td>Loc de execuție</td>
+        <td>În memorie (client-side)</td>
+        <td>Pe server (server-side)</td>
+      </tr>
+      <tr>
+        <td>Surse tipice</td>
+        <td>List, Array</td>
+        <td>Entity Framework, LINQ to SQL</td>
+      </tr>
+      <tr>
+        <td>Performanță</td>
+        <td>Mai lent pentru seturi mari</td>
+        <td>Mai eficient pentru volume mari</td>
+      </tr>
+      <tr>
+        <td>Execuție întârziată</td>
+        <td>Da</td>
+        <td>Da</td>
+      </tr>
+    </table>
+
+    <h2>4) Când să le folosești?</h2>
+    <ul>
+      <li>Folosește <strong>IEnumerable</strong> când lucrezi cu colecții deja în memorie.</li>
+      <li>Folosește <strong>IQueryable</strong> când vrei să delegi filtrarea și selectarea datelor către baza de date.</li>
+    </ul>
+
+    <h2>5) Concluzie</h2>
+    <p>
+      Pe scurt: <strong>IEnumerable</strong> lucrează cu date deja încărcate, iar <strong>IQueryable</strong>
+      construiește expresii care sunt transformate în SQL și executate pe server.
+    </p>
+    <p>
+      Alegerea corectă depinde de sursa datelor și de volumul lor. În .NET, de multe ori
+      vei combina cele două: <code>IQueryable</code> pentru a aduce datele eficiente din DB,
+      apoi <code>IEnumerable</code> pentru procesări în memorie.
+    </p>
+
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear())</script> · Scris de Munteanu Silviu-Cristian
+  </footer>
+</body>
+</html>
