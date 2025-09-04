@@ -34,6 +34,7 @@
     <div class="wrap">
       <a class="back" href="index.html">← Înapoi la acasă</a>
       <h1>IEnumerable vs IQueryable în C#</h1>
+ <img class="heroimg smallimg" src="assets/images/IEnumvsIQue.webp" alt="Definiție IEnumvsIQue ">
       <p class="lead">Două interfețe foarte folosite în LINQ și Entity Framework. Află diferențele și când să le folosești.</p>
     </div>
   </header>
