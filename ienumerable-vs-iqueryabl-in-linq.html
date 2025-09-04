@@ -27,6 +27,18 @@
     table{width:100%;border-collapse:collapse;margin:16px 0}
     th,td{border:1px solid rgba(255,255,255,.08);padding:8px;text-align:left}
     th{background:var(--card)}
+
+    /* imagine erou, variantă mică și responsive */
+    .heroimg{display:block;margin:10px auto 0 auto;border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+    .smallimg{max-width:420px;width:100%;height:auto}
+
+    /* „Definiție scurtă” */
+    .def{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.08);
+      padding:12px; border-radius:12px; margin:12px 0;
+    }
+    .def strong{color:var(--text)}
   </style>
 </head>
 <body>
@@ -34,7 +46,7 @@
     <div class="wrap">
       <a class="back" href="index.html">← Înapoi la acasă</a>
       <h1>IEnumerable vs IQueryable în C#</h1>
- <img class="heroimg smallimg" src="assets/images/IEnumvsIQue.webp" alt="Definiție IEnumvsIQue ">
+      <img class="heroimg smallimg" src="assets/images/IEnumvsIQue.webp" alt="IEnumerable vs IQueryable - diagramă explicativă">
       <p class="lead">Două interfețe foarte folosite în LINQ și Entity Framework. Află diferențele și când să le folosești.</p>
     </div>
   </header>
@@ -42,9 +54,13 @@
   <main class="wrap">
 
     <h2>1) Ce este <code>IEnumerable&lt;T&gt;</code>?</h2>
+    <div class="def">
+      <strong>Definiție scurtă:</strong> <code>IEnumerable&lt;T&gt;</code> reprezintă o colecție deja în memorie
+      pe care o poți parcurge element cu element. Filtrarea/transformarea LINQ se face <em>după</em> ce datele au fost aduse în memorie.
+    </div>
     <p>
       <strong>IEnumerable</strong> este o interfață definită în <code>System.Collections</code> și folosită pentru
-      a parcurge colecții deja încărcate în memorie: <code>List&lt;T&gt;</code>, <code>Array</code>, etc.
+      a parcurge colecții încărcate în memorie: <code>List&lt;T&gt;</code>, <code>Array</code>, etc.
     </p>
     <p>
       Operațiile LINQ pe <code>IEnumerable</code> sunt executate <em>în memorie</em> după ce toate datele au fost aduse.
@@ -62,6 +78,10 @@ foreach (var n in result)
     </div>
 
     <h2>2) Ce este <code>IQueryable&lt;T&gt;</code>?</h2>
+    <div class="def">
+      <strong>Definiție scurtă:</strong> <code>IQueryable&lt;T&gt;</code> construiește un arbore de expresii LINQ
+      care este tradus în SQL (sau în limbajul sursei) și rulat pe server. Astfel, aduci în memorie doar datele necesare.
+    </div>
     <p>
       <strong>IQueryable</strong> este definită în <code>System.Linq</code> și este folosită când datele
       provin din surse externe (de exemplu baze de date, prin Entity Framework).
