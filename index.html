@@ -192,11 +192,38 @@
 .hero .dot:nth-child(3){ left:75%; top:30%; background:rgba(158,206,106,.9); animation-duration:5.5s; animation-delay:1.2s; }
 .hero .dot:nth-child(4){ left:40%; top:10%; animation-duration:6.5s; animation-delay:1.8s; }
 
-@keyframes drift{
-  0%   { transform: translateY(0) translateX(0)   scale(1);   opacity:.9; }
-  50%  { transform: translateY(-60px) translateX(15px) scale(1.15); opacity:1; }
-  100% { transform: translateY(0) translateX(0)   scale(1);   opacity:.9; }
+/* layout articole + cuprins (cu TOC în dreapta) */
+.articles-layout{
+  display:grid;
+  grid-template-columns: 1fr 280px; /* stânga: articole | dreapta: TOC */
+  gap:16px;
 }
+@media (max-width: 900px){
+  .articles-layout{ grid-template-columns: 1fr; }
+}
+
+/* stil simplu pentru cuprins (tip W3Schools) */
+.toc{
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  position: sticky;   /* rămâne sus la scroll */
+  top: 20px;
+  height: fit-content;
+  box-shadow: var(--shadow);
+}
+.toc strong{ display:block; margin-bottom:8px; font-size:18px; }
+.toc .group{ margin:10px 0 12px; }
+.toc .group-title{
+  font-size:14px; text-transform:uppercase; letter-spacing:.4px;
+  color: var(--muted); margin:6px 0;
+}
+.toc ul{ list-style: disc; margin:6px 0 0 18px; padding:0; }
+.toc li{ margin:6px 0; }
+.toc a{ color: var(--brand); text-decoration:none; }
+.toc a:hover{ text-decoration:underline; }
+
 
 </style>
 
@@ -303,52 +330,20 @@
       </div>
     </section>
    
-<!-- ARTICOLE -->
 <!-- ARTICOLE + CUPRINS (dreapta) -->
 <div class="articles-layout" id="articole">
-  
-  <!-- CU PRINS (dreapta) -->
-  <nav class="toc" aria-label="Cuprins articole">
-    <strong>Cuprins</strong>
-
-    <div class="group">
-      <div class="group-title">Lecții începători</div>
-      <ul>
-        <li><a href="extension-methods.html">Extension Methods în C#</a></li>
-        <li><a href="ienumerable-vs-iqueryable.html">IEnumerable vs IQueryable</a></li>
-      </ul>
-    </div>
-
-    <div class="group">
-      <div class="group-title">Lecții avansați .NET</div>
-      <ul>
-        <li><a href="cqrs-mvc-ef.html">CQRS cu ASP.NET MVC &amp; EF</a></li>
-        <li><a href="clean-architecture-notes.html">Clean Architecture – notițe</a></li>
-      </ul>
-    </div>
-
-    <div class="group">
-      <div class="group-title">Lecții Cybersecurity</div>
-      <ul>
-        <li><a href="malware.html">Ce este malware? Definiție & protecție</a></li>
-        <li><a href="owasp-top10-intro.html">OWASP Top 10 – Introducere</a></li>
-        <li><a href="hashing-vs-encryption.html">Hashing vs Encryption</a></li>
-      </ul>
-    </div>
-  </nav>
 
   <!-- LISTA ARTICOLE (stânga) — conținutul tău existent -->
   <section style="padding-top:0">
     <h2>Articole</h2>
     <div class="grid">
-      
+
       <!-- articol 1 -->
       <article class="card">
         <img src="assets/images/IEnumvsIQue.webp" alt="Articol despre IEnumerable vs IQueryable">
         <h3>Differences Between IEnumerable and IQueryable in C#</h3>
         <p>Un articol clar, explicat ca pentru un începător, despre diferențele dintre IEnumerable și IQueryable în C#.</p>
         <p class="meta">Publicat: Iunie 2025</p>
-        <!-- corectez URL-ul (lipsea 'e') -->
         <p><a href="ienumerable-vs-iqueryable.html" target="_blank">Citește articolul →</a></p>
       </article>
 
@@ -369,7 +364,7 @@
         <p class="meta">Publicat: Iunie 2025</p>
         <p><a href="extension-methods.html">Citește articolul →</a></p>
       </article>
-      
+
       <!-- articol 4 -->
       <article class="card">
         <img src="assets/images/dotnet-core-selenium-long.png" alt="Articol despre Selenium și automatizări">
@@ -399,7 +394,39 @@
 
     </div>
   </section>
+
+  <!-- CUPRINS (dreapta) -->
+  <nav class="toc" aria-label="Cuprins articole">
+    <strong>Cuprins</strong>
+
+    <div class="group">
+      <div class="group-title">Lecții începători</div>
+      <ul>
+        <li><a href="extension-methods.html">Extension Methods în C#</a></li>
+        <li><a href="ienumerable-vs-iqueryable.html">IEnumerable vs IQueryable</a></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Lecții avansați .NET</div>
+      <ul>
+        <li><a href="cqrs-mvc-ef.html">CQRS cu ASP.NET MVC &amp; EF</a></li>
+        <li><a href="clean-architecture-notes.html">Clean Architecture – notițe</a></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Lecții Cybersecurity</div>
+      <ul>
+        <li><a href="malware.html">Ce este malware? Definiție & protecție</a></li>
+        <li><a href="owasp-top10-intro.html">OWASP Top 10 – Introducere</a></li>
+        <li><a href="hashing-vs-encryption.html">Hashing vs Encryption</a></li>
+      </ul>
+    </div>
+  </nav>
+
 </div>
+
 
 
     <!-- CONTACT -->
