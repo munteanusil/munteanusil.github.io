@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ce este Cybercrime-ul? — Munteanu Silviu</title>
+  <meta name="description" content="Cybercrime (infracțiuni cibernetice) — ce este, tipuri frecvente, cum sunt prinși infractorii și cum te protejezi. Explicații simple, pe înțelesul tuturor.">
+  <link rel="canonical" href="https://munteanusil.github.io/cybercrime.html"/>
+
+  <style>
+    :root{ --bg:#0b0e14; --card:#11151f; --text:#e6e8ed; --muted:#aab1c0; --brand:#7aa2f7; --max:980px; }
+    @media (prefers-color-scheme: light){ 
+      :root{ --bg:#fff; --card:#f7f8fb; --text:#0f172a; --muted:#475569; --brand:#2457f5; } 
+    }
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
+    header{padding:32px 0 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .back{font-size:14px;color:var(--muted)}
+    h1{font-size:clamp(26px,4.5vw,38px);margin:6px 0}
+    .lead{color:var(--muted);margin:6px 0 18px}
+    .heroimg{width:100%;border-radius:16px;background:#0c1220;padding:0;display:block;border:1px solid rgba(255,255,255,.08)}
+    main{padding:20px 0 60px}
+    h2{margin:28px 0 8px;font-size:22px}
+    pre{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:12px;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .tip, .card{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:16px;border-radius:12px}
+    footer{border-top:1px solid rgba(255,255,255,.08);color:var(--muted);padding:18px 0;text-align:center}
+
+    .smallimg { max-width: 400px; display: block; margin: 20px auto; }
+    ul { padding-left: 20px; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="back" href="index.html">← Înapoi la acasă</a>
+      <h1>Ce este Cybercrime-ul?</h1>
+      <p class="lead">O explicație clară despre infracțiunile cibernetice: tipuri, exemple reale și pași simpli de protecție.</p>
+      <img class="heroimg smallimg" src="assets/images/cybercrime-ro.png" alt="Cybercrime — card educativ">
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h2>Definiție</h2>
+    <p>
+      <strong>Cybercrime</strong> (infracțiuni cibernetice) reprezintă orice activitate ilegală care folosește
+      calculatoare, rețele sau internetul. Țintele pot fi persoane, companii sau instituții publice, iar motivațiile
+      variază de la profit financiar până la spionaj sau sabotaj digital.
+    </p>
+
+    <h2>Tipuri frecvente</h2>
+    <ul>
+      <li><strong>Phishing</strong> — mesaje care imită organizații reale și încearcă să te convingă să dezvălui parole sau date bancare.</li>
+      <li><strong>Ransomware</strong> — îți criptează fișierele și cere plată pentru deblocare.</li>
+      <li><strong>DDoS</strong> (Distributed Denial of Service) — supraîncarcă servere/servicii până devin indisponibile.</li>
+      <li><strong>Furt de identitate</strong> — folosirea datelor tale (ex. CNP, card) pentru împrumuturi sau conturi false.</li>
+      <li><strong>Malware</strong> (troieni, spyware, keylogger) — fură date, spionează sau deschide „uși din spate”.</li>
+      <li><strong>Fraudă cu reclame</strong> (ad fraud) — generare automată de clicuri/vizualizări pentru profit.</li>
+      <li><strong>„Crypto tumblers”</strong> — amestecă tranzacții cripto pentru a ascunde originea fondurilor.</li>
+    </ul>
+
+    <h2>Exemplu: Cum sunt prinși infractorii</h2>
+    <p>
+      Deși atacatorii își ascund urmele, deseori sunt identificați din <em>greșeli mici</em> sau prin
+      <em>corelarea inteligentă a urmelor digitale</em>:
+    </p>
+    <ul>
+      <li><strong>Greșeli tehnice</strong> — o singură conexiune fără VPN/Tor poate lăsa IP-ul real în loguri.</li>
+      <li><strong>Urme financiare</strong> — plățile de răscumpărare în cripto pot fi urmărite pe blockchain până la un exchange cu verificare KYC.</li>
+      <li><strong>Greșeli umane</strong> — reutilizarea aceluiași alias pe forumuri și pe rețele sociale dezvăluie identitatea reală.</li>
+      <li><strong>Cooperare internațională</strong> — echipele poliției (ex. Europol, FBI) confiscă servere și fac „sinkholing” pe botnets.</li>
+    </ul>
+    <p class="card">
+      <strong>Scenariu simplificat:</strong> Operatorii unui ransomware cer plata într-o criptomonedă.
+      Adresa lor este monitorizată pe blockchain → fondurile trec printr-un „tumbler” → ajung la un exchange cu KYC →
+      autoritățile solicită datele de identificare → suspectul este localizat.
+    </p>
+
+    <h2>Cum te protejezi?</h2>
+    <ul>
+      <li><strong>Educație & atenție</strong> — fii suspicios la urgențe false, linkuri scurte sau atașamente dubioase.</li>
+      <li><strong>Parole unice + manager de parole</strong> — nu reutiliza parola importantă în mai multe locuri.</li>
+      <li><strong>Activează 2FA</strong> — preferabil cu aplicație de autentificare, nu prin SMS.</li>
+      <li><strong>Actualizări regulate</strong> — sistem, browser, aplicații; și firmware-ul routerului.</li>
+      <li><strong>Backup 3–2–1</strong> — 3 copii, 2 medii diferite, 1 copie off-site (cloud sau drive extern).</li>
+      <li><strong>Antivirus/EDR de încredere</strong> — evită software piratat și extensii necunoscute.</li>
+      <li><strong>Minimizează datele expuse</strong> — partajează doar ce e necesar; verifică setările de confidențialitate.</li>
+    </ul>
+
+    <p class="tip" style="margin-top:16px">
+      📨 <strong>Model scurt de raportare phishing:</strong><br>
+      „Am primit acest e-mail la [data/ora]. Pare de la [organizație], dar domeniul linkului e suspect.
+      Nu am introdus date. Atașez captura și header-ele. Vă rog să verificați.”
+    </p>
+
+    <h2>Resurse utile</h2>
+    <ul>
+      <li><a href="https://www.w3schools.com/cybersecurity/" target="_blank" rel="noopener">W3Schools — Cybersecurity</a></li>
+      <li><a href="https://www.cisa.gov/shields-up" target="_blank" rel="noopener">CISA — Shields Up</a></li>
+      <li><a href="https://www.ncsc.gov.uk/collection/small-business-guide" target="_blank" rel="noopener">NCSC UK — Small Business Guide</a></li>
+      <li><a href="https://www.proofpoint.com/us/threat-reference" target="_blank" rel="noopener">Proofpoint — Threat Reference</a></li>
+      <li><a href="https://www.ibm.com/think/topics/cybersecurity" target="_blank" rel="noopener">IBM — Cybersecurity Topics</a></li>
+    </ul>
+
+    <p class="muted" style="margin-top:18px">
+      <em>Text original, scris pe înțelesul începătorilor. Poți folosi secțiunea ca parte dintr-un mini-ghid de securitate pe site-ul tău.</em>
+    </p>
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear())</script> · Scris de Munteanu Silviu-Cristian
+  </footer>
+</body>
+</html>
